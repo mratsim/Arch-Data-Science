@@ -1,0 +1,27 @@
+# Maintainer: Mamy Ratsimbazafy <mamy.ratsimbazafy_pkgbuild@gadz.org>
+pkgname=python-kaggle-cli
+_pkgname=kaggle-cli
+pkgver=0.4.3
+pkgrel=1
+pkgdesc="An unofficial Kaggle command line tool."
+arch=(any)
+url="https://github.com/floydsoft/kaggle-cli"
+license=('MIT')
+groups=()
+depends=('python')
+makedepends=('python-setuptools')
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=(!emptydirs)
+install=
+source=("https://files.pythonhosted.org/packages/source/${_pkgname:0:1}/${_pkgname}/${_pkgname}-${pkgver}.tar.gz")
+md5sums=(6b6f464b95d7e3a9ad45b6f8ee0ab4c0)
+
+package() {
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  python setup.py install --root="${pkgdir}/" --optimize=1
+}
+
+# vim:set ts=2 sw=2 et:

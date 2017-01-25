@@ -1,0 +1,27 @@
+# Maintainer: Mamy Ratsimbazafy <mamy.ratsimbazafy_pkgbuild@gadz.org>
+pkgname=python-sklearn-pandas
+_pkgname=sklearn-pandas
+pkgver=1.2.0
+pkgrel=1
+pkgdesc="Pandas integration with scikit-learn (sklearn)"
+arch=(any)
+url="https://github.com/paulgb/sklearn-pandas"
+license=('custom')
+groups=()
+depends=('python')
+makedepends=('python-setuptools')
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=(!emptydirs)
+install=
+source=("https://files.pythonhosted.org/packages/source/${_pkgname:0:1}/${_pkgname}/${_pkgname}-${pkgver}.tar.gz")
+md5sums=(802b29b978b348026ba01567f12be612)
+
+package() {
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  python setup.py install --root="${pkgdir}/" --optimize=1
+}
+
+# vim:set ts=2 sw=2 et:
