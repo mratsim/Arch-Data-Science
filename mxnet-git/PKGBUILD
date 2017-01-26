@@ -1,0 +1,116 @@
+# Maintainer: Mamy Ratsimbazafy <mamy {dot} ratsimbazafy at gadz [dot] org>
+
+_name=mxnet
+pkgbase=mxnet-git
+pkgname=('mxnet-git'
+         'python-mxnet-git'
+         'python2-mxnet-git')
+pkgver=r4797.7c197d6f
+pkgrel=1
+url='https://github.com/dmlc/mxnet'
+license=('APACHE')
+source=('git://github.com/dmlc/mxnet'
+        'git://github.com/NVlabs/cub'
+        'git://github.com/dmlc/dmlc-core'
+        'git://github.com/dmlc/mshadow'
+        'git://github.com/dmlc/nnvm'
+        'git://github.com/dmlc/ps-lite'
+        )
+makedepends=('python2-setuptools' 'python-setuptools')
+arch=('x86_64')
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+pkgver() {
+  cd "${_name}"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${_name}"
+  git submodule init
+  git config submodule.cub.url "${srcdir}/cub"
+  git config submodule.dmlc-core.url "${srcdir}/dmlc-core"
+  git config submodule.mshadow.url "${srcdir}/mshadow"
+  git config submodule.nnvm.url "${srcdir}/nnvm"
+  git config submodule.ps-lite.url "${srcdir}/ps-lite"
+  git submodule update
+}
+
+build() {
+  cd "${_name}"
+  cp make/config.mk ./
+  sed -i 's/ADD_CFLAGS =/ADD_CFLAGS = -march=native"/g' ./config.mk
+  sed -i 's/USE_OPENMP = 0/USE_OPENMP = 1/g' ./config.mk
+  sed -i 's/USE_CUDA = 0/USE_CUDA = 1/g' ./config.mk
+  sed -i 's/USE_NVRTC = 0/USE_NVRTC = 1/g' ./config.mk
+  sed -i 's#USE_CUDA_PATH = NONE#USE_CUDA_PATH = /opt/cuda/#g' ./config.mk
+  make -j8
+}
+
+package_mxnet-git() {
+  pkgdesc='Lightweight, Portable, Flexible Distributed/Mobile Deep Learning with Dynamic, Mutation-aware Dataflow Dep Scheduler'
+  provides=('mxnet')
+  conflicts=('mxnet')
+  depends=('cuda' 'cudnn' 'opencv' 'openblas')
+  optdepends=('python-mxnet: Python 3 Wrapper'
+              'python2-mxnet: Python 2 Wrapper'
+              'graphviz: for viewing network graphs'
+              'jupyter: for running mxnet examples')
+
+  cd "${_name}"
+
+  # Install License
+  install -D -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+
+  # Install Documentation
+  install -D -m644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+
+  # Install shared libraries
+  mkdir -p "${pkgdir}/usr/lib"
+  install -Dm644 lib/*.a "${pkgdir}/usr/lib"
+  install -Dm644 lib/*.so "${pkgdir}/usr/lib"
+
+  # Install includes
+  mkdir -p "${pkgdir}/usr/include"
+  cp -r include/mxnet "${pkgdir}/usr/include"
+  cp -r dmlc-core/include/dmlc "${pkgdir}/usr/include"
+
+  # Copy the demos to opt/xgboost
+  mkdir -p "${pkgdir}"/opt/mxnet
+  cp -r example "${pkgdir}"/opt/mxnet
+}
+
+package_python2-mxnet-git() {
+  pkgdesc='mxnet Python 2 wrapper'
+  depends=('mxnet'
+           'python2'
+           'python2-numpy'
+           'python2-scipy')
+  conflicts=('python2-mxnet')
+  provides=('python2-mxnet')
+
+  cd "${_name}/python"
+
+  python2 setup.py install --root="${pkgdir}" --optimize=1
+}
+
+package_python-mxnet-git() {
+  pkgdesc='mxnet Python 3 wrapper'
+  depends=('mxnet'
+           'python'
+           'python-numpy'
+           'python-scipy')
+  conflicts=('python-mxnet')
+  provides=('python-mxnet')
+
+  cd "${_name}/python"
+
+  python setup.py install --root="${pkgdir}" --optimize=1
+}
+
+# vim:set ts=2 sw=2 et:

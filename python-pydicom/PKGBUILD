@@ -1,0 +1,33 @@
+pkgname=python-pydicom-git
+_pkgname=pydicom
+pkgver=v0.9.9.r271.g2443a4c
+pkgrel=1
+pkgdesc='Read, modify and write DICOM files with python code'
+arch=('any')
+url='https://github.com/darcymason/pydicom'
+license=('custom:MIT')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-pydicom')
+provides=('python-pydicom')
+source=('git://github.com/darcymason/pydicom.git')
+md5sums=('SKIP')
+optdepends=('python-numpy: To manipulate pixel data')
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 license.txt ${pkgdir}/usr/share/licenses/python-pydicom
+}

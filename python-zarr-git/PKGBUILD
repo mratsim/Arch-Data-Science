@@ -1,0 +1,42 @@
+pkgname=python-zarr-git
+_pkgname=zarr
+pkgver=v2.1.3.r12.geef8940
+pkgrel=1
+pkgdesc='An implementation of chunked, compressed, N-dimensional arrays for Python.'
+arch=('any')
+url='https://github.com/alimanfoo/zarr'
+license=('MIT')
+depends=('python-numpy' 'python-fasteners')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-zarr')
+provides=('python-zarr')
+source=('git://github.com/alimanfoo/zarr.git'
+	'git://github.com/Blosc/c-blosc.git'
+)
+md5sums=('SKIP' 'SKIP')
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+prepare() {
+  cd $_pkgname
+  git submodule init
+  git config submodule.c-blosc.url $srcdir/c-blosc
+  git submodule update
+}
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-zarr
+}
