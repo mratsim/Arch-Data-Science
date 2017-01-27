@@ -1,4 +1,4 @@
-# Maintainer: Mamy Ratsimbazafy <mamy.ratsimbazafy_pkgbuild@gadz.org>
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 pkgname=python-kaggle-cli
 _pkgname=kaggle-cli
 pkgver=0.4.3

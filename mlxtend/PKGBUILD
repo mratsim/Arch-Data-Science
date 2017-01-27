@@ -1,4 +1,4 @@
-# Maintainer: Mamy Ratsimbazafy <mamy.ratsimbazafy_pkgbuild@gadz.org>
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz [at] org>
 pkgname=python-mlxtend
 _pkgname=mlxtend
 pkgver=0.5.0
