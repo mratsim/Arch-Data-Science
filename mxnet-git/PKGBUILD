@@ -5,7 +5,7 @@ pkgbase=mxnet-git
 pkgname=('mxnet-git'
          'python-mxnet-git'
          'python2-mxnet-git')
-pkgver=r4797.7c197d6f
+pkgver=r4800.e086a1fc
 pkgrel=1
 url='https://github.com/dmlc/mxnet'
 license=('APACHE')
@@ -44,11 +44,13 @@ prepare() {
 build() {
   cd "${_name}"
   cp make/config.mk ./
-  sed -i 's/ADD_CFLAGS =/ADD_CFLAGS = -march=native"/g' ./config.mk
+  sed -i 's/ADD_CFLAGS =/ADD_CFLAGS = -march=native/g' ./config.mk
   sed -i 's/USE_OPENMP = 0/USE_OPENMP = 1/g' ./config.mk
   sed -i 's/USE_CUDA = 0/USE_CUDA = 1/g' ./config.mk
   sed -i 's/USE_NVRTC = 0/USE_NVRTC = 1/g' ./config.mk
+  sed -i 's/USE_BLAS = atlas/USE_BLAS = openblas/g' ./config.mk
   sed -i 's#USE_CUDA_PATH = NONE#USE_CUDA_PATH = /opt/cuda/#g' ./config.mk
+  sed -i 's/MSDHADOW_USE_PASCAL=0/MSDHADOW_USE_PASCAL=1/g' ./mshadow/make/mshadow.mk #Pascal GPUs support
   make -j8
 }
 
@@ -97,6 +99,7 @@ package_python2-mxnet-git() {
   cd "${_name}/python"
 
   python2 setup.py install --root="${pkgdir}" --optimize=1
+  ln -s '/usr/lib/libmxnet.so' ${pkgdir}/
 }
 
 package_python-mxnet-git() {
@@ -111,6 +114,7 @@ package_python-mxnet-git() {
   cd "${_name}/python"
 
   python setup.py install --root="${pkgdir}" --optimize=1
+  ln -s '/usr/lib/libmxnet.so' ${pkgdir}/
 }
 
 # vim:set ts=2 sw=2 et:
