@@ -1,3 +1,4 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 pkgname=python-pydicom-git
 _pkgname=pydicom
 pkgver=v0.9.9.r271.g2443a4c

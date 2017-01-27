@@ -1,4 +1,4 @@
-# Maintainer: Mamy Ratsimbazafy <mamy {dot} ratsimbazafy at gadz [dot] org>
+# Maintainer: Mamy Ratsimbazafy <mamy {dot} ratsimbazafy_pkgbuild (at) gadz [dot] org>
 
 _name=mxnet
 pkgbase=mxnet-git
