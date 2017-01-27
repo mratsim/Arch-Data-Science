@@ -52,6 +52,7 @@ build() {
   sed -i 's#USE_CUDA_PATH = NONE#USE_CUDA_PATH = /opt/cuda/#g' ./config.mk
   sed -i 's/MSDHADOW_USE_PASCAL=0/MSDHADOW_USE_PASCAL=1/g' ./mshadow/make/mshadow.mk #Pascal GPUs support
   make -j8
+
 }
 
 package_mxnet-git() {
@@ -63,6 +64,7 @@ package_mxnet-git() {
               'python2-mxnet: Python 2 Wrapper'
               'graphviz: for viewing network graphs'
               'jupyter: for running mxnet examples')
+  install=mxnet.install
 
   cd "${_name}"
 
@@ -85,6 +87,10 @@ package_mxnet-git() {
   # Copy the demos to opt/xgboost
   mkdir -p "${pkgdir}"/opt/mxnet
   cp -r example "${pkgdir}"/opt/mxnet
+
+  # Add libmxnet to LD_LIBRARY_PATH for the python bindings
+  mkdir -p "${pkgdir}/etc/ld.so.conf.d/" 
+  echo "/usr/lib/libmxnet.so" > "${pkgdir}/etc/ld.so.conf.d/mxnet.conf"
 }
 
 package_python2-mxnet-git() {
@@ -99,7 +105,6 @@ package_python2-mxnet-git() {
   cd "${_name}/python"
 
   python2 setup.py install --root="${pkgdir}" --optimize=1
-  ln -s '/usr/lib/libmxnet.so' ${pkgdir}/
 }
 
 package_python-mxnet-git() {
@@ -114,7 +119,6 @@ package_python-mxnet-git() {
   cd "${_name}/python"
 
   python setup.py install --root="${pkgdir}" --optimize=1
-  ln -s '/usr/lib/libmxnet.so' ${pkgdir}/
 }
 
 # vim:set ts=2 sw=2 et:
