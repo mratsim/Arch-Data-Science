@@ -12,7 +12,7 @@
 
 pkgname="opencv-cuda-git"
 _pkgname="opencv-git"
-pkgver=3.1.0.r1522.g1ae27eb
+pkgver=3.2.0.r107.ga8aff6f64
 pkgrel=1
 pkgdesc="Open Source Computer Vision Library compiled with extra modules(opencv_contrib) and CUDA"
 url="http://opencv.org/"
@@ -76,10 +76,20 @@ _cmakeopts=('-D WITH_OPENCL=ON'
             '-D ENABLE_FAST_MATH=ON'
             '-D CUDA_FAST_MATH=ON'
             '-D WITH_CUBLAS=ON'
-            '-D CMAKE_CXX_FLAGS=-std=c++11' #'-D CMAKE_CXX_FLAGS=-std=c++98'; use c++11 because the module sfm depends on ceres-solver which was compiled with c++11; see https://github.com/opencv/opencv_contrib/issues/500
+            '-D CMAKE_CXX_FLAGS=-std=c++11 -march=native' #'-D CMAKE_CXX_FLAGS=-std=c++98'; use c++11 because the module sfm depends on ceres-solver which was compiled with c++11; see https://github.com/opencv/opencv_contrib/issues/500
 # Settings for neural network module'
             '-D BUILD_opencv_dnn=ON'
             '-D BUILD_LIBPROTOBUF_FROM_SOURCES=ON'
+            #Extra flags for speed on Skylake + Nvidia Pascal
+            '-D ENABLE_SSE3=ON'
+            '-D ENABLE_SSSE3=ON'
+            '-D ENABLE_SSE41=ON'
+            '-D ENABLE_SSE42=ON'
+            '-D ENABLE_POPCNT=ON'
+            '-D ENABLE_AVX=ON'
+            '-D ENABLE_AVX2=ON'
+            '-D ENABLE_FMA3=ON'
+            '-D WITH_CUFFT=ON'
     )
 
 # SSE only available from Pentium 3 onwards (i686 is way older)
@@ -88,8 +98,8 @@ _cmakeopts=('-D WITH_OPENCL=ON'
                  '-D ENABLE_SSE2=OFF'
                  '-D ENABLE_SSE3=OFF')
 
-# all x64 CPUs support SSE2 but not SSE3
-[[ "$CARCH" = 'x86_64' ]] && _cmakeopts+=('-D ENABLE_SSE3=OFF')
+# all x64 CPUs support SSE2 but not SSE3 #:????
+#[[ "$CARCH" = 'x86_64' ]] && _cmakeopts+=('-D ENABLE_SSE3=OFF')
 
 # NEON support only for armv7h
 [[ "$CARCH" = 'armv7h' ]] && _cmakeopts+=('-D ENABLE_NEON=ON')
