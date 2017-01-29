@@ -1,0 +1,36 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-scikit-cuda-git
+_pkgname=scikit-cuda
+pkgver=0.5.1.r100.gd7b1549
+pkgrel=1
+pkgdesc='Python interface to GPU-powered libraries'
+arch=('any')
+url='https://github.com/lebedov/scikit-cuda'
+license=('custom')
+depends=('python-mako' 'python-pycuda' 'cuda' 'python-numpy' 'python-scipy' 'python-nose' )
+makedepends=('git' 'python-setuptools')
+conflicts=('python-scikit-cuda' 'scikits-cuda')
+provides=('python-scikit-cuda')
+source=('git://github.com/lebedov/scikit-cuda')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 docs/source/license.rst ${pkgdir}/usr/share/licenses/python-scikit-cuda
+}
