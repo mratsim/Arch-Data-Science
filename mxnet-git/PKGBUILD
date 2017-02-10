@@ -5,7 +5,7 @@ pkgbase=mxnet-git
 pkgname=('mxnet-git'
          'python-mxnet-git'
          'python2-mxnet-git')
-pkgver=r4800.e086a1fc
+pkgver=r4808.0f6d5834
 pkgrel=1
 url='https://github.com/dmlc/mxnet'
 license=('APACHE')

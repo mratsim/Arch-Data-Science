@@ -1,0 +1,37 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-bcolz-git
+_pkgname=bcolz
+pkgver=1.1.2.r7.g8df64b4
+pkgrel=1
+pkgdesc='A columnar data container that can be compressed. '
+arch=('any')
+url='https://github.com/Blosc/bcolz'
+license=('custom:MIT')
+depends=('python-numpy')
+makedepends=('git' 'python-setuptools' 'cython')
+conflicts=('python-bcolz')
+provides=('python-bcolz')
+source=('git://github.com/Blosc/bcolz'
+)
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSES/BCOLZ.txt ${pkgdir}/usr/share/licenses/python-bcolz
+}

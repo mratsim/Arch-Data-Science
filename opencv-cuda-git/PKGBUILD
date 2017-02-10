@@ -90,6 +90,7 @@ _cmakeopts=('-D WITH_OPENCL=ON'
             '-D ENABLE_AVX2=ON'
             '-D ENABLE_FMA3=ON'
             '-D WITH_CUFFT=ON'
+            '-D WITH_LIBV4L=OFF' #For sme reason the first compilations fails at videodev.h and videoio.h not found. They do not exist since ages.
     )
 
 # SSE only available from Pentium 3 onwards (i686 is way older)
