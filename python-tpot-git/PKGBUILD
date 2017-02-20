@@ -1,0 +1,38 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-tpot-git
+_pkgname=tpot
+pkgver=v0.6.r152.g685c971
+pkgrel=1
+pkgdesc='A Python tool that automatically creates and optimizes machine learning pipelines using genetic programming.'
+arch=('any')
+url='https://github.com/rhiever/tpot'
+license=('GPL3')
+depends=('python-numpy' 'python-scipy' 'python-scikit-learn' 'python-deap' 'python-update-checker' 'python-tqdm' )
+optdepends=('python-xgboost: enable XGBoost in pipelines')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-tpot')
+provides=('python-tpot')
+source=('git://github.com/rhiever/tpot.git'
+)
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-tpot
+}
