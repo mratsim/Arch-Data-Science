@@ -1,0 +1,37 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-thinc-git
+_pkgname=thinc
+pkgver=v6.3.0.r247.gc6ac3ee
+pkgrel=1
+pkgdesc="spaCy\'s Machine Learning library for NLP in Python"
+arch=('any')
+url='https://github.com/explosion/thinc'
+license=('MIT')
+depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-murmurhash' 'python-six' 'python-pytest' 'python-hypothesis' 'python-tqdm' 'python-cytoolz' 'python-plac' 'python-mock' 'python-termcolor' 'python-wrapt' 'python-dill')
+makedepends=('git' 'python-setuptools' 'cython')
+conflicts=('python-thinc')
+provides=('python-thinc')
+source=('git://github.com/explosion/thinc.git'
+)
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-thinc
+}

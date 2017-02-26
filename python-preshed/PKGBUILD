@@ -1,0 +1,36 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-preshed-git
+_pkgname=preshed
+pkgver=0.46.4.r13.gd3fcdfb
+pkgrel=1
+pkgdesc='Cython hash tables that assume keys are pre-hashed'
+arch=('any')
+url='https://github.com/explosion/preshed'
+license=('MIT')
+depends=('cython' 'python-cymem' 'python-pytest')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-preshed')
+provides=('python-preshed')
+source=('git://github.com/explosion/preshed.git')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
+}

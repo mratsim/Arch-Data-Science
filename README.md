@@ -1,6 +1,6 @@
-# Deep Learning packages for Archlinux
+# Data Science packages for Archlinux
 
-Welcome to my repo to build Data Science, Machine Learning, Computer Vision and Deep Learning packages from source.
+Welcome to my repo to build Data Science, Machine Learning, Computer Vision, Natural language Processing and Deep Learning packages from source.
 
 My aim is to squeeze the maximum performance for my current configuration (Skylake Xeon + Nvidia Pascal GPU) so:
 
@@ -16,3 +16,4 @@ My Data Science environment is running from a LXC container so Tensorflow build 
 
 ## Caveats
 Please note that current mxnet and lightgbm packages are working but must be improved: they put their libraries in /usr/mxnet and /usr/lightgbm
+Packages included are those not available by default in Archlinux AUR or that needed substantial modifications. So check Archlinux AUR for standard packages like Numpy, Pandas or Theano.
