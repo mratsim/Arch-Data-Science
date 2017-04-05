@@ -1,0 +1,37 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-ete3-git
+_pkgname=ete
+pkgver=3.0.0b35.r87.g4ef2bca4
+pkgrel=1
+pkgdesc='building, comparing, annotating, manipulating and visualising trees'
+arch=('any')
+url='https://github.com/etetoolkit/ete'
+license=('GPL')
+depends=('python-numpy' 'python-six')
+optdepends=('python-pyqt4: tree drawing' 'python-lxml: PhyloXML NexML format parsing')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-ete3')
+provides=('python-ete3')
+source=('git://github.com/etetoolkit/ete.git')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
+}
