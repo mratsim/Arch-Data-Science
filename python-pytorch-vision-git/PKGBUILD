@@ -1,0 +1,37 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-pytorch-vision-git
+_pkgname=vision
+pkgver=v0.1.8.r2.gde5dcb9
+pkgrel=1
+pkgdesc='Datasets, Transforms and Models specific to Computer Vision'
+arch=('any')
+url='https://github.com/pytorch/vision'
+license=('BSD:3-clause')
+depends=('python-numpy' 'python-pytorch' 'python-six' 'python-pillow')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-pytorch-vision')
+provides=('python-pytorch-vision')
+source=('git://github.com/pytorch/vision.git'
+)
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-pytorch-vision
+}
