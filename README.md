@@ -7,6 +7,7 @@ My aim is to squeeze the maximum performance for my current configuration (Skyla
 * All packages are build with -O3 -march=native if the package ignores /etc/makepkg.conf config.
 * I do not use fast-math except if it's the default upstream (example opencv). You might want to enable it for GCC and NVCC (Nvidia compiler), for example for Theano
 * All CUDA packages are build with CUDA 8, cuDNN 5.1 and Compute capabilities 6.1 (Pascal)
+* Pytorch is also build with MAGMA support. Magma is a linear algebra library for heterogeneous computing (CPU + GPU hybridization)
 * BLAS library is OpenBLAS except for Tensorflow (Eigen)
 * Parallel library is OpenMP except for Tensorflow (Eigen) and OpenCV (Intel TBB, Thread Building Blocks)  
 * OpenCV is further optimized with Intel IPP (Integrated Performance Primitives)

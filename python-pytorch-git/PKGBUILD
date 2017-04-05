@@ -27,6 +27,12 @@ pkgver () {
 prepare() {
   cd "$srcdir/"
 
+  #Adding MAGMA on Archlinux support
+  sed -i 's#/usr/local/magma/lib#/opt/magma/lib#g' "${_pkgname}/torch/lib/THC/cmake/FindMAGMA.cmake"
+  sed -i 's#/usr/local/magma/include#/opt/magma/include#g' "${_pkgname}/torch/lib/THC/cmake/FindMAGMA.cmake"
+  sed -i 's#/usr/local/magma/lib#/opt/magma/lib#g' "${_pkgname}/torch/lib/THCS/cmake/FindMAGMA.cmake"
+  sed -i 's#/usr/local/magma/include#/opt/magma/include#g' "${_pkgname}/torch/lib/THCS/cmake/FindMAGMA.cmake"
+
   cp -a "${_pkgname}" "${_pkgname}-py2"
   cd "${_pkgname}"
   sed -e "s|#![ ]*/usr/bin/python$|#!/usr/bin/python2|" \
