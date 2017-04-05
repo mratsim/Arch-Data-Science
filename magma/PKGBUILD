@@ -71,4 +71,8 @@ package() {
     rm -rf ${pkgdir}/opt/magma/lib/pkgconfig
     mkdir -p ${pkgdir}/usr/share/licenses/magma
     cp ${srcdir}/magma-${pkgver}/COPYRIGHT ${pkgdir}/usr/share/licenses/magma/LICENSE
+
+    # Add libmagma to LD_LIBRARY_PATH
+    mkdir -p "${pkgdir}/etc/ld.so.conf.d/"
+    echo "/opt/magma/lib" > "${pkgdir}/etc/ld.so.conf.d/magma.conf"
 }
