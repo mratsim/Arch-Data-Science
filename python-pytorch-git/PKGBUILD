@@ -3,7 +3,7 @@
 pkgbase="python-pytorch-git"
 pkgname=("python-pytorch-git" "python2-pytorch-git")
 _pkgname="pytorch"
-pkgver=0.1.11.r23.g04f5b5ea
+pkgver=0.1.11.r154.ga8e6610e
 pkgrel=1
 pkgdesc="Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 arch=('x86_64')
@@ -27,12 +27,6 @@ pkgver () {
 prepare() {
   cd "$srcdir/"
 
-  #Adding MAGMA on Archlinux support
-  sed -i 's#/usr/local/magma/lib#/opt/magma/lib#g' "${_pkgname}/torch/lib/THC/cmake/FindMAGMA.cmake"
-  sed -i 's#/usr/local/magma/include#/opt/magma/include#g' "${_pkgname}/torch/lib/THC/cmake/FindMAGMA.cmake"
-  sed -i 's#/usr/local/magma/lib#/opt/magma/lib#g' "${_pkgname}/torch/lib/THCS/cmake/FindMAGMA.cmake"
-  sed -i 's#/usr/local/magma/include#/opt/magma/include#g' "${_pkgname}/torch/lib/THCS/cmake/FindMAGMA.cmake"
-
   cp -a "${_pkgname}" "${_pkgname}-py2"
   cd "${_pkgname}"
   sed -e "s|#![ ]*/usr/bin/python$|#!/usr/bin/python2|" \
@@ -51,6 +45,7 @@ build() {
   WITH_CUDNN=1 \
   CUDNN_LIB_DIR=/opt/cuda/lib64 \
   CUDNN_INCLUDE_DIR=/opt/cuda/include \
+  CMAKE_PREFIX_PATH=/opt/magma \
   python2 setup.py build
 
   msg "Building Python 3"
@@ -62,6 +57,7 @@ build() {
   WITH_CUDNN=1 \
   CUDNN_LIB_DIR=/opt/cuda/lib64 \
   CUDNN_INCLUDE_DIR=/opt/cuda/include \
+  CMAKE_PREFIX_PATH=/opt/magma \
   python setup.py build
 }
 
