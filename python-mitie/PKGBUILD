@@ -1,0 +1,36 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-mitie-git
+_pkgname=mitie
+pkgver=v0.4.r154.gc8da9049
+pkgrel=1
+pkgdesc='NLP Information Extraction'
+arch=('any')
+url='https://github.com/mit-nlp/mitie'
+license=('Boost')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-mitie')
+provides=('python-mitie')
+source=('git://github.com/mit-nlp/mitie')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  # License BOOST in the README
+  # install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
+}
