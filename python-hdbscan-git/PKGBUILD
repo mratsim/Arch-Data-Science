@@ -2,7 +2,7 @@
 
 pkgname=python-hdbscan-git
 _pkgname=hdbscan
-pkgver=0.8.6.r33.g58fcf1f
+pkgver=0.8.10.r13.g5b1ed1d
 pkgrel=1
 pkgdesc='Hierarchical Density-Based Spatial Clustering of Applications with Noise'
 arch=('any')
