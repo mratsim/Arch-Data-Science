@@ -1,0 +1,39 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-pillow-simd-git
+_pkgname=pillow-simd
+pkgver=v4.0.0.post0.r1.ga4a5a0fc
+pkgrel=1
+pkgdesc='Fork of Python Pillow with SIMD (SSE4 and AVX) optimizations'
+arch=('any')
+url='https://github.com/uploadcare/pillow-simd'
+license=('custom:PIL')
+depends=('python')
+makedepends=('git')
+options=(!emptydirs)
+provides=('python3-imaging' 'python-pillow')
+conflicts=('python3-imaging' 'python-pillow')
+source=('git://github.com/uploadcare/pillow-simd.git')
+md5sums=('SKIP')
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
+}
+
+# vim:set ts=2 sw=2 et:
