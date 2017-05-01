@@ -1,0 +1,37 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-pytorch-torchsample-git
+_pkgname=torchsample
+pkgver=r166.3d0dfb1
+pkgrel=1
+pkgdesc='High-Level Training, Data Augmentation, and Utilities for Pytorch'
+arch=('any')
+url='https://github.com/ncullen93/torchsample'
+license=('MIT')
+depends=('python-pytorch' 'python-pytorch-vision')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-pytorch-torchsample')
+provides=('python-pytorch-torchsample')
+source=('git://github.com/ncullen93/torchsample.git'
+)
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)" 
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE.txt ${pkgdir}/usr/share/licenses/python-pytorch-torchsample
+}
