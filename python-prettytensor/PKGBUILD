@@ -1,0 +1,36 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-prettytensor-git
+_pkgname=prettytensor
+pkgver=TF_0.12.0rc0.r11.g75daa0b
+pkgrel=1
+pkgdesc='Pretty Tensor: Fluent Networks in TensorFlow'
+arch=('any')
+url='https://github.com/google/prettytensor'
+license=('APL')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-prettytensor')
+provides=('python-prettytensor')
+source=('git://github.com/google/prettytensor')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  # License BOOST in the README
+  # install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
+}
