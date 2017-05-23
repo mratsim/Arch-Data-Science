@@ -2,7 +2,7 @@
 
 pkgname=python-pytorch-vision-git
 _pkgname=vision
-pkgver=v0.1.8.r2.gde5dcb9
+pkgver=v0.1.8.r9.gcbb05c5
 pkgrel=1
 pkgdesc='Datasets, Transforms and Models specific to Computer Vision'
 arch=('any')

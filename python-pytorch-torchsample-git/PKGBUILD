@@ -2,7 +2,7 @@
 
 pkgname=python-pytorch-torchsample-git
 _pkgname=torchsample
-pkgver=r166.3d0dfb1
+pkgver=r187.21f0310
 pkgrel=1
 pkgdesc='High-Level Training, Data Augmentation, and Utilities for Pytorch'
 arch=('any')
