@@ -1,0 +1,48 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgbase=python-ramp-workflow-git
+pkgname=('python-ramp-workflow-git' 'python2-ramp-workflow-git')
+_gitname=ramp-workflow
+pkgver=v0.1.0.r7.g6ad46d5
+pkgrel=1
+pkgdesc="Toolkit for building predictive workflows on the top of pandas and scikit-learn."
+arch=('i686' 'x86_64')
+url="http://www.ramp.studio"
+license=('BSD')
+source=("${_gitname}::git+https://github.com/paris-saclay-cds/ramp-workflow")
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/${_gitname}
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+# Note due to the following conflicts, both Python 2 and 3 version cannot be installed at the same time
+# /usr/bin/ramp_convert_notebook exists in both 'python-ramp-workflow-git' and 'python2-ramp-workflow-git'
+# /usr/bin/ramp_test_notebook exists in both 'python-ramp-workflow-git' and 'python2-ramp-workflow-git'
+# /usr/bin/ramp_test_submission exists in both 'python-ramp-workflow-git' and 'python2-ramp-workflow-git'
+
+prepare() {
+  rm -rf "${_gitname}-py2"
+  cp -a "${_gitname}"{,-py2}
+}
+
+package_python-ramp-workflow-git() {
+  makedepends=('python-setuptools')
+  depends=('python' 'python-numpy' 'python-scipy' 'python-pandas' 'python-scikit-learn' 'python-cloudpickle') 
+  provides=('python-ramp-workflow')
+  conflicts=('python-ramp-workflow')
+
+  cd ${_gitname}
+  python setup.py install --prefix=/usr --root="${pkgdir}"
+}
+
+package_python2-ramp-workflow-git() {
+  makedepends=('python2-setuptools')
+  depends=('python2' 'python2-numpy' 'python2-scipy' 'python2-pandas' 'python2-scikit-learn' 'python2-cloudpickle') 
+  provides=('python2-ramp-workflow')
+  conflicts=('python2-ramp-workflow')
+
+  cd ${_gitname}-py2
+  python2 setup.py install --prefix=/usr --root="${pkgdir}"
+}

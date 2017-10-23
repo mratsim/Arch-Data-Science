@@ -2,7 +2,7 @@
 
 pkgname=python-scikit-cuda-git
 _pkgname=scikit-cuda
-pkgver=0.5.1.r100.gd7b1549
+pkgver=0.5.1.r167.g24e5f21
 pkgrel=1
 pkgdesc='Python interface to GPU-powered libraries'
 arch=('any')
