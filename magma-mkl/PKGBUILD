@@ -12,18 +12,20 @@ _GPU_TARGET=sm61
 _USE_CMAKE=0
 ##### End
 
-pkgname=magma
+pkgname=magma-mkl
 pkgver=2.2.0
 pkgrel=1
-pkgdesc="Provides a dense linear algebra library similar to LAPACK but for heterogeneous/hybrid architectures, starting with current 'Multicore+GPU' systems. (with CUDA)"
+pkgdesc="Provides a dense linear algebra library similar to LAPACK but for heterogeneous/hybrid architectures, starting with current 'Multicore+GPU' systems. (with CUDA and MKL)"
 arch=("i686" "x86_64")
 url="http://icl.cs.utk.edu/magma/"
 license=(custom)
-depends=("cuda>=6.5.0" "gsl" "python" "openblas-lapack")
+depends=("cuda>=6.5.0" "gsl" "python" "intel-mkl")
 makedepends=("gcc-fortran")
 options=('staticlibs')
 sha1sums=('7f884e4c80dd296939174282d69d19cc1cca71a5')
 source=("http://icl.cs.utk.edu/projectsfiles/magma/downloads/magma-${pkgver}.tar.gz")
+provides=('magma')
+conflicts=('magma')
 
 build() {
 	cd "${srcdir}/magma-${pkgver}"
@@ -31,11 +33,15 @@ build() {
     if ((_USE_CMAKE == 0))
     then
         # Modify Makefile
-        cp make.inc-examples/make.inc.openblas make.inc
+        cp make.inc-examples/make.inc.mkl-gcc make.inc
         sed -i "/#GPU_TARGET ?=/c GPU_TARGET = ${_GPU_TARGET}" make.inc
         sed -i '/#CUDADIR/c CUDADIR   = /opt/cuda' make.inc
-        sed -i '/#OPENBLASDIR/c OPENBLASDIR   = /usr/lib' make.inc
-        sed -i 's^-L$(OPENBLASDIR)/lib^-L$(OPENBLASDIR)^g' make.inc
+
+        export MKL_ROOT=/opt/intel/mkl
+        export MKL_INCLUDE=$MKL_ROOT/include
+        export MKL_LIBRARY=$MKL_ROOT/lib/intel64
+        source /opt/intel/mkl/bin/mklvars.sh intel64
+        source /opt/intel/bin/compilervars.sh intel64 # For MKL 2018, this is a symlink to /opt/intel/compilers_and_libraries_2018.0.128/linux/bin/compilervars.sh
 
         make clean
         make lib

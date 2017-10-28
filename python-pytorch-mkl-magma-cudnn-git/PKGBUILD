@@ -1,18 +1,19 @@
+# Update by mratsim: MKL and MAGMA support
 # Maintainer: Stephen Zhang <zsrkmyn at gmail dot com>
 
 pkgbase="python-pytorch-git"
-pkgname=("python-pytorch-git" "python2-pytorch-git")
+pkgname=("python-pytorch-mkl-magma-cudnn-git" "python2-pytorch-mkl-magma-cudnn-git")
 _pkgname="pytorch"
-pkgver=0.1.11.r317.gde984558
+pkgver=0.1.11.r2305.gdc6c9e8df
 pkgrel=1
 pkgdesc="Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 arch=('x86_64')
 url="https://github.com/pytorch/pytorch"
 license=('BSD')
-makedepends=('python' 'python-setuptools' 'python2' 'python2-setuptools' 'gcc5' 'cmake' 'python-yaml' 'python2-yaml')
-depends=('cuda' 'cudnn')
+makedepends=('python' 'python-setuptools' 'python2' 'python2-setuptools' 'gcc6' 'cmake' 'python-yaml' 'python2-yaml')
+depends=('cuda' 'cudnn' 'intel-mkl')
 optdepends=('magma: Further CPU, OpenCL, CUDA, optimized operations')
-source=("git://github.com/pytorch/pytorch")
+source=("git://github.com/pytorch/pytorch.git")
 sha256sums=('SKIP')
 
 pkgver () {
@@ -25,8 +26,7 @@ pkgver () {
 
 
 prepare() {
-  cd "$srcdir/"
-
+  cd "$srcdir"
   cp -a "${_pkgname}" "${_pkgname}-py2"
   cd "${_pkgname}"
   sed -e "s|#![ ]*/usr/bin/python$|#!/usr/bin/python2|" \
@@ -36,10 +36,22 @@ prepare() {
 }
 
 build() {
+
+  export MKL_ROOT=/opt/intel/mkl
+  export MKL_INCLUDE=$MKL_ROOT/include
+  export MKL_LIBRARY=$MKL_ROOT/lib/intel64
+  source /opt/intel/mkl/bin/mklvars.sh intel64
+  source /opt/intel/bin/compilervars.sh intel64 # For MKL 2018, this is a symlink to /opt/intel/compilers_and_libraries_2018.0.128/linux/bin/compilervars.sh
+  export CMAKE_INCLUDE_PATH=$MKL_INCLUDE:$CMAKE_INCLUDE_PATH
+  export CMAKE_LIBRARY_PATH=$MKL_LIBRARY:$CMAKE_LIBRARY_PATH
+
+
   msg "Building Python 2"
   cd "$srcdir/${_pkgname}-py2"
-  CC=gcc-5 \
-  CXX=g++-5 \
+  git submodule update --init
+
+  CC=gcc-6 \
+  CXX=g++-6 \
   WITH_CUDA=1 \
   CUDA_HOME=/opt/cuda \
   WITH_CUDNN=1 \
@@ -50,8 +62,10 @@ build() {
 
   msg "Building Python 3"
   cd "$srcdir/${_pkgname}"
-  CC=gcc-5 \
-  CXX=g++-5 \
+  git submodule update --init
+
+  CC=gcc-6 \
+  CXX=g++-6 \
   WITH_CUDA=1 \
   CUDA_HOME=/opt/cuda \
   WITH_CUDNN=1 \
@@ -61,7 +75,7 @@ build() {
   python setup.py build
 }
 
-package_python2-pytorch-git() {
+package_python2-pytorch-mkl-magma-cudnn-git() {
   conflicts=('python2-pytorch')
   provides=('python2-pytorch')
   depends+=('python2' 'python2-yaml' 'python2-numpy')
@@ -70,7 +84,7 @@ package_python2-pytorch-git() {
   install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.txt"
 }
 
-package_python-pytorch-git() {
+package_python-pytorch-mkl-magma-cudnn-git() {
   conflicts=('python-pytorch')
   provides=('python-pytorch')
   depends+=('python' 'python-yaml' 'python-numpy')
