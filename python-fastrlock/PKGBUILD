@@ -1,0 +1,39 @@
+
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-fastrlock-git
+_pkgname=fastrlock
+pkgver=r20.c86bb66
+pkgrel=1
+pkgdesc='a fast, re-entrant, optimistic lock for CPython'
+arch=('any')
+url='https://github.com/scoder/fastrlock'
+license=('MIT')
+makedepends=('git' 'python-setuptools')
+optdepends=('cython: Cython support')
+conflicts=('python-fastrlock')
+provides=('python-fastrlock')
+source=('git://github.com/scoder/fastrlock.git')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  # git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  # No release tagged yet
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
+}
