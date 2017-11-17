@@ -5,7 +5,7 @@ pkgbase=python-lightgbm-git
 pkgname=(
          'python-lightgbm-git'
          )
-pkgver=r461.081c0d5
+pkgver=r930.00e03ced
 pkgrel=1
 url='https://github.com/Microsoft/LightGBM'
 license=('MIT')
