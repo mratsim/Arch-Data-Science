@@ -2,13 +2,13 @@
 
 pkgname=python-spacy-git
 _pkgname=spacy
-pkgver=v1.6.0.r134.gf81b985f
+pkgver=v2.0.3.r13.gc3051e95
 pkgrel=1
 pkgdesc='Industrial-strength Natural Language Processing (NLP) with Python and Cython'
 arch=('any')
 url='https://github.com/explosion/spaCy'
 license=('MIT')
-depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-thinc' 'python-murmurhash' 'python-plac' 'python-six' 'python-ujson' 'python-cloudpickle' 'python-sputnik')
+depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-thinc' 'python-murmurhash' 'python-plac' 'python-six' 'python-ujson' 'python-msgpack' 'python-msgpack-numpy' 'python-dill' 'python-requests' 'python-regex' 'python-ftfy')
 makedepends=('git' 'python-setuptools' 'cython')
 conflicts=('python-spacy')
 provides=('python-spacy')

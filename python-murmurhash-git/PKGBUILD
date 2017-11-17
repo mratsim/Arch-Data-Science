@@ -2,7 +2,7 @@
 
 pkgname=python-murmurhash-git
 _pkgname=murmurhash
-pkgver=0.26.4.r5.gbc155e1
+pkgver=0.26.4.r13.g3745e93
 pkgrel=1
 pkgdesc='Cython bindings for MurmurHash2'
 arch=('any')

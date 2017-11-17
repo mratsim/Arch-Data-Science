@@ -2,7 +2,7 @@
 
 pkgname=python-preshed-git
 _pkgname=preshed
-pkgver=0.46.4.r13.gd3fcdfb
+pkgver=tmp3.r0.gdb6f6a4
 pkgrel=1
 pkgdesc='Cython hash tables that assume keys are pre-hashed'
 arch=('any')
