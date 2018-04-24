@@ -1,0 +1,33 @@
+# Maintainer: Mamy Ratsimbazafy < Mamy (dot- Ratsimbazafy_pkgbuild -at) gadz (dot- org>
+
+_name=LightGBM
+pkgbase=python-lightgbm-git
+pkgname=(
+         'python-lightgbm-git'
+         )
+pkgver=r1055.90ab5144
+pkgrel=1
+url='https://github.com/Microsoft/LightGBM'
+license=('MIT')
+source=('git+https://github.com/Microsoft/LightGBM.git')
+makedepends=('python-setuptools' )
+arch=('x86_64')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "${_name}"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "${_name}"
+  mkdir build ; cd build
+  cmake -BOOST_ROOT=/usr/lib/ -DUSE_GPU=1 -DOpenCL_LIBRARY=/opt/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/opt/cuda/include/ .. 
+  make -j8
+}
+
+
+package() {
+  cd "${_name}"/python-package
+  python setup.py install --root="${pkgdir}" --optimize=1
+}
