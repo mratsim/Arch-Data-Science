@@ -1,0 +1,107 @@
+# Maintainer: Dmitry Popov <ixaphire@gmail.com>
+
+_name=xgboost
+pkgbase=xgboost-cuda-git
+pkgname=('xgboost-cuda-git'
+         'python-xgboost-git'
+         'python2-xgboost-git')
+pkgver=r3279.3ee725e3
+pkgrel=1
+url='https://github.com/dmlc/xgboost'
+license=('APACHE')
+source=('git+https://github.com/dmlc/xgboost.git'
+        'git+https://github.com/dmlc/dmlc-core'
+        'git+https://github.com/dmlc/rabit'
+        'python_no_libs.patch')
+makedepends=('python2-setuptools' 'python-setuptools')
+arch=('x86_64')
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'dd66a09be68f38fef140c948027e44e3733778e741c84491124b5de8acf6c336')
+
+pkgver() {
+  cd "${_name}"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${_name}"
+  git submodule init
+  git config submodule.dmlc-core.url "${srcdir}/dmlc-core"
+  git config submodule.rabit.url "${srcdir}/rabit"
+  git submodule update
+  patch -p1 < "${srcdir}/python_no_libs.patch"
+}
+
+build() {
+  cd "${_name}"
+  CC=gcc-6 CXX=g++-6 cmake -DUSE_CUDA=ON -DGPU_COMPUTE_VER=61 # Pascal = 6.1 # -DUSE_AVX=ON doesn't compile :/
+  CC=gcc-6 CXX=g++-6 make -j
+}
+
+package_xgboost-cuda-git() {
+  pkgdesc='An optimized distributed gradient boosting library designed to be highly efficient, flexible and portable'
+  provides=('xgboost')
+  conflicts=('xgboost')
+  optdepends=('python-xgboost-git: Python 3 Wrapper'
+              'python2-xgboost-git: Python 2 Wrapper')
+
+  cd "${_name}"
+
+  # Install License
+  install -D -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+
+  # Install Documentation
+  install -D -m644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+
+  # Install main executable
+  install -Dm755 "xgboost" "${pkgdir}/usr/bin/xgboost"
+
+  # Install shared libraries
+  mkdir -p "${pkgdir}/usr/lib"
+  find . -name \*.a
+  find . -name \*.so
+  install -Dm644 libgpuxgboost.a "${pkgdir}/usr/lib"
+  install -Dm644 lib/libxgboost.so "${pkgdir}/usr/lib"
+
+  # Install includes
+  mkdir -p "${pkgdir}/usr/include"
+  cp -r include/xgboost "${pkgdir}/usr/include"
+  cp -r dmlc-core/include/dmlc "${pkgdir}/usr/include"
+  cp -r rabit/include/rabit "${pkgdir}/usr/include"
+
+  # Copy the demos to opt/xgboost
+  mkdir -p "${pkgdir}"/opt/xgboost
+  cp -r demo "${pkgdir}"/opt/xgboost
+}
+
+package_python2-xgboost-git() {
+  pkgdesc='XGBoost Python 2 wrapper'
+  depends=('xgboost'
+           'python2'
+           'python2-numpy'
+           'python2-scipy')
+  conflicts=('python2-xgboost')
+  provides=('python2-xgboost')
+
+  cd "${_name}/python-package"
+
+  python2 setup.py install --root="${pkgdir}" --optimize=1
+}
+
+package_python-xgboost-git() {
+  pkgdesc='XGBoost Python 3 wrapper'
+  depends=('xgboost'
+           'python'
+           'python-numpy'
+           'python-scipy')
+  conflicts=('python-xgboost')
+  provides=('python-xgboost')
+
+  cd "${_name}/python-package"
+
+  python setup.py install --root="${pkgdir}" --optimize=1
+}
+
+# vim:set ts=2 sw=2 et:
