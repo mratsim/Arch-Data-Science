@@ -2,7 +2,7 @@
 
 pkgname=python-thinc-cuda-git
 _pkgname=thinc
-pkgver=v6.10.1.r1.g291cd10
+pkgver=v6.11.2.r1.g7371c14
 pkgrel=1
 pkgdesc="spaCy\'s Machine Learning library for NLP in Python (CUDA accelerated)"
 arch=('any')
