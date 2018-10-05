@@ -4,7 +4,7 @@
 pkgbase="python-pytorch-git"
 pkgname=("python-pytorch-mkl-magma-cudnn-git" "python2-pytorch-mkl-magma-cudnn-git")
 _pkgname="pytorch"
-pkgver=0.1.11.r2305.gdc6c9e8df
+pkgver=0.1.11.r8489.gb4ae80d45
 pkgrel=1
 pkgdesc="Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 arch=('x86_64')

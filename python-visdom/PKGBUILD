@@ -1,0 +1,49 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgbase=python-visdom-git
+pkgname=('python-visdom-git' 'python2-visdom-git')
+_gitname=visdom
+pkgver=r90.8d2d1de
+pkgrel=1
+pkgdesc="A flexible tool for creating, organizing, and sharing visualizations of live, rich data. Supports Torch and Numpy. "
+arch=('i686' 'x86_64')
+url="https://github.com/facebookresearch/visdom"
+license=('custom')
+source=("${_gitname}::git+https://github.com/facebookresearch/visdom")
+sha512sums=('SKIP')
+
+# Note: License is Creative Commons
+
+pkgver() {
+  cd "${srcdir}"/${_gitname}
+  ## No release tagged :/
+  # git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  rm -rf "${_gitname}-py2"
+  cp -a "${_gitname}"{,-py2}
+}
+
+package_python-visdom-git() {
+  makedepends=('python-setuptools')
+  depends=('python' 'python-numpy' 'python-plotly')
+  provides=('python-visdom')
+  conflicts=('python-visdom')
+
+  cd ${_gitname}
+  python setup.py install --prefix=/usr --root="${pkgdir}"
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
+}
+
+package_python2-visdom-git() {
+  makedepends=('python2-setuptools')
+  depends=('python2' 'python2-numpy') 
+  provides=('python2-visdom')
+  conflicts=('python2-visdom')
+
+  cd ${_gitname}-py2
+  python2 setup.py install --prefix=/usr --root="${pkgdir}"
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python2-$_pkgname
+}
