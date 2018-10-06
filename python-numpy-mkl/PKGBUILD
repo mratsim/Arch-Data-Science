@@ -3,99 +3,52 @@
 # Contributor: Douglas Soares de Andrade <dsa@aur.archlinux.org>
 # Contributor: Angel 'angvp' Velasquez <angvp[at]archlinux.com.ve> 
 # Adapted to mkl by Simone Riva
+# Updated to x86_64, GCC only by Mamy André-Ratsimbazafy
 pkgbase="python-numpy-mkl"
 pkgname="python-numpy-mkl"
 #pkgname=('python-numpy')
 pkgver=1.15.0
 pkgrel=1
-pkgdesc="Scientific tools for Python compiled with intel mkl"
-arch=('i686' 'x86_64')
+pkgdesc="Scientific tools for Python compiled with Intel MKL + GCC"
+arch=('x86_64')
 license=('custom')
 options=('staticlibs')
 url="http://numpy.scipy.org/"
-depends=( 'intel-mkl' 'python' )
+depends=( 'intel-mkl' 'intel-compiler-base' 'python' )
 makedepends=( 'python-setuptools' 'python-nose' 'cython' 'glibc' )
+provides=("python-numpy=${pkgver}")
+conflicts=('python-numpy')
 
-source=( https://github.com/numpy/numpy/archive/v${pkgver}.tar.gz 
-         'site64.cfg' 
-         'site32.cfg') 
+source=( "https://github.com/numpy/numpy/archive/v${pkgver}.tar.gz" 
+         'site.cfg') 
 
-sha256sums=( 'fec926cc3f157f4023e4126597dd5b9056778094393db01a3751b5e816a4a9ec' # main pkg§
-             '86cd68a695a5e1d76f8e53cda70c888c4ed04349f15c8096d4492e346e7187e1' # site64
-             '882f2717deca0fd6a2e2384aac2dc7973c566f9cd2ba46777c3b5ffdffa814df' # site32
-)
+sha256sums=( 'fec926cc3f157f4023e4126597dd5b9056778094393db01a3751b5e816a4a9ec'
+             '86cd68a695a5e1d76f8e53cda70c888c4ed04349f15c8096d4492e346e7187e1'
+           )
 
 build() {
 
 cd "${srcdir}"
 
-# set by hand this flag if you want to compile with gcc
-force_gcc=true
-
-if hash icc; then
-    use_intel_cc=true
-    use_gcc=false
-else
-    use_intel_cc=false
-    use_gcc=true
-fi
-
-if [ "$force_gcc" = true ] ; then
-    use_intel_cc=false
-    use_gcc=true
-fi
-
-if [ "$CARCH" = "i686" ]; then
-    cp ${srcdir}/site32.cfg ${srcdir}/site.cfg
-    _compiler=intel
-else
-    cp ${srcdir}/site64.cfg ${srcdir}/site.cfg
-    _compiler=intelem
-fi
-
-
-
-cp -a numpy-${pkgver} numpy-py2-${pkgver}
-
 export Atlas=None
 export LDFLAGS="$LDFLAGS -shared"
 
-if [ "$use_gcc" = true ]; then
-    export CFLAGS="-fopenmp -march=native -O3 -Wl,--no-as-needed"
-    export CXXFLAGS="-fopenmp -march=native -O3 -Wl,--no-as-needed"
-    export LDFLAGS="-ldl -lm"
-    export FFLAGS="-fopenmp -march=native -O3"
-fi
-
-if [ "$use_intel_cc" = true ]; then 
-    export __INTEL_PRE_CFLAGS="$__INTEL_PRE_CFLAGS -D_Float128=__float128"
-fi 
-
+export CFLAGS="-fopenmp -march=native -O3 -Wl,--no-as-needed"
+export CXXFLAGS="-fopenmp -march=native -O3 -Wl,--no-as-needed"
+export LDFLAGS="-ldl -lm"
+export FFLAGS="-fopenmp -march=native -O3"
 
 echo "Building Python3"
-cd "${srcdir}"
 cp ${srcdir}/site.cfg "${srcdir}/numpy-${pkgver}"
 cd "${srcdir}/numpy-${pkgver}"
 
-if [ "$use_intel_cc" = true ]; then 
-    python setup.py config --compiler=${_compiler} build_clib --compiler=${_compiler} build_ext --compiler=${_compiler}
-fi 
-
-if [ "$use_gcc" = true ]; then
-    python setup.py config  build_clib  build_ext
-fi
-
+python setup.py config  build_clib  build_ext
 }
 
-package_python-numpy-mkl() {
-
-depends=('intel-mkl' 'python')
-provides=("python-numpy=${pkgver}")
-conflicts=('python-numpy')
-
+package() {
 cd "${srcdir}/numpy-${pkgver}"
 python setup.py config_fc install --prefix=/usr --root="${pkgdir}" --optimize=1
 
-install -m755 -d "${pkgdir}/usr/share/licenses/python3-numpy"
-install -m644 LICENSE.txt "${pkgdir}/usr/share/licenses/python3-numpy/"
+install -m755 -d "${pkgdir}/usr/share/licenses/python-numpy"
+install -m644 LICENSE.txt "${pkgdir}/usr/share/licenses/python-numpy/"
 }
