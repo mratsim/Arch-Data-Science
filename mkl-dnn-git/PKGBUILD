@@ -1,0 +1,49 @@
+# Maintainer: Baris Demirdelen <barisdemirdelen at gmail com>
+# Previous maintainer: Andrew Anderson <aanderso@tcd.ie>
+# Contributor: Jonathon Fernyhough <jonathon_at manjaro_dotorg>
+# Updated by Mamy André-Ratsimbazafy <Github mratsim> for Git + OpenMP fixes
+
+_name=mkl-dnn
+_mklmlver=2019.0.20180710 # For the MKL link script for optimized SGEMM
+_releasever=0.16
+pkgname=mkl-dnn-git
+pkgver=0.16
+pkgrel=1
+pkgdesc="Intel® Math Kernel Library for Deep Neural Networks - MKL linked + provides OpenMP runtime"
+arch=(x86_64)
+url=https://github.com/intel/mkl-dnn
+license=('APACHE')
+makedepends=('cmake>=2.8')
+depends=('intel-mkl'            # Provides Optimized SGEMM
+         'intel-compiler-base') # Build Intel OpenMP shared lib
+provides=('mkl-dnn' 'openmp')
+conflicts=('mkl-dnn' 'openmp')
+source=('git+https://github.com/intel/mkl-dnn'
+        "https://github.com/intel/$_name/releases/download/v$_releasever/mklml_lnx_$_mklmlver.tgz")
+sha256sums=('SKIP'
+            'e2233534a9d15c387e22260997af4312a39e9f86f791768409be273b5453c4e6')
+
+prepare() {
+  cd "$srcdir/$_name"
+  mkdir -p build external
+
+  # "Take advantage of optimized matrix-matrix multiplication (GEMM) function
+  #  from Intel MKL"
+  ln -s "$srcdir"/mklml_lnx_$_mklmlver external/
+}
+
+build() {
+  cd "$srcdir/$_name/build"
+  cmake -DCMAKE_INSTALL_PREFIX="$pkgdir"/usr ..
+  make
+}
+
+# check() {
+#   cd "$srcdir/$pkgname-$pkgver/build"
+#   make test
+# }
+
+package() {
+  cd "$srcdir/$_name/build"
+  make install
+}
