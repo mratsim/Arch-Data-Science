@@ -7,7 +7,7 @@ _name=mkl-dnn
 _mklmlver=2019.0.20180710 # For the MKL link script for optimized SGEMM
 _releasever=0.16
 pkgname=mkl-dnn-git
-pkgver=0.16
+pkgver=v0.16.r193.g17c33b59
 pkgrel=1
 pkgdesc="Intel® Math Kernel Library for Deep Neural Networks - MKL linked + provides OpenMP runtime"
 arch=(x86_64)
@@ -23,13 +23,25 @@ source=('git+https://github.com/intel/mkl-dnn'
 sha256sums=('SKIP'
             'e2233534a9d15c387e22260997af4312a39e9f86f791768409be273b5453c4e6')
 
+pkgver() {
+  cd "${_name}"
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
 prepare() {
+  if [ -f /usr/lib/libiomp5.so ]; then
+    if $(pacman -Qs $_name > /dev/null); then # Not very robust but it will catch both release and git version
+      error "Please uninstall MKL-DNN before recompiling otherwise Intel OpenMP will not be repackaged.";
+      exit 1
+    fi
+  fi
+    
   cd "$srcdir/$_name"
   mkdir -p build external
 
   # "Take advantage of optimized matrix-matrix multiplication (GEMM) function
   #  from Intel MKL"
-  ln -s "$srcdir"/mklml_lnx_$_mklmlver external/
+  ln -sf "$srcdir"/mklml_lnx_$_mklmlver external/
 }
 
 build() {
