@@ -103,6 +103,7 @@ build() {
     cmake_args=(
         # Install
         -D CMAKE_INSTALL_PREFIX="${pkgdir}"/usr
+        -D CMAKE_INSTALL_LIBDIR=lib
         -D OPENCV_EXTRA_MODULES_PATH=$srcdir/${_name}_contrib/modules # Required for Cuda
         -D BUILD_opencv_sfm=OFF # This require installation of the Ceres Solver and gflags
         # 3rd party libs
