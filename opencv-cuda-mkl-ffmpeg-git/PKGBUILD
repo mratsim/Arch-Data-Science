@@ -1,0 +1,178 @@
+# Maintainer: yhfudev <yhfudev gmail>
+# Contributor: Valentin Churavy <v.churavy@gmail.com>
+# Contributor: Romain Reignier <rom.reignier@gmail.com> (ARM support)
+# Contributor: Fabien Dubosson <fabien.dubosson@gmail.com>
+# Contributor: David Manouchehri <david@davidmanouchehri.com>
+# Contributor: CHEN Xing <cxcxcxcx@gmail.com>
+# Contributor: Martin Imobersteg <martin.imobersteg@gmail.com>
+# Contributor: Artyom Smirnov <smirnoffjr@gmail.com>
+# Also largely inspired by `opencv` in extra, so including contributors too:
+# Contributor: Ray Rashif <schiv@archlinux.org>
+# Contributor: Tobias Powalowski <tpowa@archlinux.org>
+
+# Updated by Mamy André-Ratsimbazafy <Github mratsim>
+# Use FFMPEG for video, use the new CPU_BASELINE and CPU_DISPATCH FLAG
+# Use MKL for LAPACK
+
+pkgname="opencv-cuda-mkl-ffmpeg-git"
+_name="opencv"
+pkgver=3.2.0.r107.ga8aff6f64
+pkgrel=1
+pkgdesc="Open Source Computer Vision Library compiled CUDA, Intel MKL and ffmpeg"
+url="http://opencv.org/"
+license=('BSD')
+arch=('x86_64')
+depends=(# Always on codecs
+         'zlib' 'libtiff' 'jasper' 'libjpeg' 'libpng' 'openexr' 'libwebp'
+         'libdc1394'            # Camera control
+         'python'               # Python "cv2" API
+         'cuda' 'libclc'        # CUDA and OpenCL
+         'intel-compiler-base'  # Intel MKL variables
+         'intel-mkl'            # BLAS + LAPACK
+         'intel-tbb_psxe'       # Intel Threads Building Blocks. Parallel Studio Edition.
+         # A IPP subset is retrieved by this package. Alternatively install the full IPP package.
+         # 'intel-ipp'          # Intel Integrated Performance Primitives for Computer Vision. Need Intel License (Free for student or Open-Source Contrib)
+         'ffmpeg'               # Video input support
+         'freetype2' 'harfbuzz' # Text on image
+         'tesseract'            # OCR
+         'hdf5'
+         )
+makedepends=('git' 'cmake' 'python-numpy' 'mesa'
+             'gcc7'         # Required by CUDA
+    )
+optdepends=(
+            'libcl: For coding with OpenCL'
+            'python-numpy: Python 3 interface'
+            )
+options=('staticlibs')
+provides=(${_name})
+conflicts=(${_name})
+source=(${_name}::git+https://github.com/opencv/opencv.git
+        "${_name}_contrib::git+https://github.com/opencv/opencv_contrib.git"
+        # Please check https://github.com/opencv/opencv_contrib/tree/master/modules
+        # At least Cuda, Text (OCR with Tesseract) and freetype modules are required
+
+        # IPP subset - https://software.intel.com/en-us/articles/intel-integrated-performance-primitives-intel-ipp-open-source-computer-vision-library-opencv-faq
+        "https://raw.githubusercontent.com/Itseez/opencv_3rdparty/81a676001ca8075ada498583e4166079e5744668/ippicv/ippicv_linux_20151201.tgz"
+        "fix_mkl_tbb_detection.patch"
+
+    )
+md5sums=('SKIP' 'SKIP' '808b791a6eac9ed78d32a7666804320e' '9a09df8e09e62bf88fba0fac544c43b3')
+
+# Available flags https://github.com/opencv/opencv/blob/c1db75e0c7b1584b555242ec53fbef5f71d0c48f/CMakeLists.txt#L198
+
+
+prepare() {
+    cd "${srcdir}/${_name}"
+
+    # hack-fix folder naming inconsistency that they won't fix
+    # see http://code.opencv.org/issues/2512
+    # and https://bugs.archlinux.org/task/32342
+    sed 's/OpenCV\/doc/doc\/opencv/' -i CMakeLists.txt
+    sed 's/share\/OpenCV/share\/opencv/' -i CMakeLists.txt
+    sed 's/share\/OpenCV/share\/opencv/' -i cmake/templates/opencv_run_all_tests_unix.sh.in
+
+    # Intel IPP Subset, unneeded if using the full intel-ipp package
+    mkdir -p "${srcdir}/${_name}/3rdparty/ippicv/downloads/linux-808b791a6eac9ed78d32a7666804320e/"
+    ln -sf "${srcdir}/ippicv_linux_20151201.tgz" "${srcdir}/${_name}/3rdparty/ippicv/downloads/linux-808b791a6eac9ed78d32a7666804320e/ippicv_linux_20151201.tgz"
+}
+
+build() {
+    cd "${srcdir}/${_name}"
+
+    # MKLDNN is creating its own /usr/lib/libiomp5.so and there doesn't
+    # seem to be an easy to link OpenCV to it thanks to cmake ...
+    # - https://github.com/intel/mkl-dnn#intel-mkl-dnn-with-openmp
+    # - https://software.intel.com/en-us/node/522690
+    # - https://github.com/opencv/opencv/issues/12766
+    # So we use Intel TBB with MKL linked to TBB for OpenCV
+
+    source /opt/intel/mkl/bin/mklvars.sh intel64 # Set MKLROOT
+    source /opt/intel/tbb/bin/tbbvars.sh intel64 # Using TBB from Parallel Studio
+
+    # Unfortunately OpenCV MKL linking does not properly use multithreaded MKL even TBB
+    # sed -i 's#\${MKL_ROOT_DIR}/\.\./tbb/lib/\${MKL_ARCH}#\${TBB_ENV_LIB}#' cmake/OpenCVFindMKL.cmake 
+    patch <"${srcdir}/fix_mkl_tbb_detection.patch" cmake/OpenCVFindMKL.cmake
+    
+    # current nvcc supports up to GCC 7
+    export CC=$(which gcc-7)
+    export CXX=$(which g++-7)
+    mkdir -p build && cd build
+
+    # Available flags https://github.com/opencv/opencv/blob/c1db75e0c7b1584b555242ec53fbef5f71d0c48f/CMakeLists.txt#L198
+    cmake_args=(
+        # Install
+        -D CMAKE_INSTALL_PREFIX="${pkgdir}"/usr
+        -D OPENCV_EXTRA_MODULES_PATH=$srcdir/${_name}_contrib/modules # Required for Cuda
+        -D BUILD_opencv_sfm=OFF # This require installation of the Ceres Solver and gflags
+        # 3rd party libs
+        -D WITH_1394=ON         # Camera control
+        # Optional 3rd party components
+        -D WITH_CUDA=ON
+        -D WITH_CUBLAS=ON
+        -D WITH_CUFFT=ON
+        -D WITH_NVCUVID=OFF     # Deprecated for NVENC
+        -D WITH_EIGEN=OFF       # This is just a compat shim
+        -D WITH_FFMPEG=ON       # Video input support
+        -D WITH_GSTREAMER=OFF   # Also video input
+        -D WITH_GTK=OFF
+        -D WITH_IPP=ON          # Intel Performance Primitives
+        -D WITH_HALIDE=OFF      # Halide computational imagery and DNN language. Too early stage https://github.com/opencv/opencv/wiki/DNN-Efficiency
+        -D WITH_INF_ENGINE=OFF  # Intel inference engine
+        -D WITH_GDCM=ON         # DICOM image support for medical imagery
+        -D WITH_TBB=ON          # Intel Threads Building Block: Data Parallel and Task Parallel library
+        -D WITH_OPENMP=OFF     
+        -D WITH_OPENCL=ON
+        -D WITH_MATLAB=OFF
+        -D WITH_GDAL=OFF        # Geometric and Geospatial Data ABSTRACTION LIBRARY
+        -D WITH_LAPACK=ON       # Accelerated Linear Algebra (MKL or OpenBLAS)
+        -D WITH_ITT=OFF         # Support Intel VTune Instrument and Tracing
+        -D WITH_PROTOBUF=ON     # Protobuf: needed to read Caffe and Tensorflow neural network models
+        # OpenCV build components
+        -D BUILD_PERF_TESTS=OFF
+        -D BUILD_TESTS=OFF
+        -D BUILD_WITH_DEBUG_INFO=OFF
+        # OpenCV installations options
+        -D INSTALL_C_EXAMPLES=OFF
+        -D INSTALL_PYTHON_EXAMPLES=OFF
+        # OpenCV build options
+        -D ENABLE_FAST_MATH=ON
+        -D ENABLE_LTO=OFF       # Incompatible with CUDA
+        -D CV_ENABLE_INTRINSICS=ON
+
+        # Extras (undocumented)
+        -D CUDA_FAST_MATH=ON
+        -D CPU_BASELINE=AVX
+        -D CPU_DISPATCH=AVX2
+        # -D IPPROOT=<>        # Only needed if you use the full Intel IPP distribution
+        # -D MKLROOT=<>        # Defined in build script by /opt/intel/mkl/bin/mklvars.sh
+        # -D TBBROOT=<>        # Defined in build script by /opt/intel/tbb/bin/tbbvars.sh
+        -D WITH_MKL=ON
+        -D MKL_USE_MULTITHREAD=ON
+        -D MKL_WITH_TBB=ON
+        -D MKL_WITH_OPENMP=OFF
+        # -D CMAKE_LINK_LIBRARY_FLAG=iomp5
+        # -D CMAKE_PREFIX_PATH=/opt/intel/composerxe/linux/compiler/include/
+        # -D CMAKE_PREFIX_PATH=/opt/intel/lib/
+        -D Tesseract_INCLUDE_DIR=/usr/include/tesseract/
+
+        # Python
+        -D BUILD_opencv_python2=OFF
+        -D BUILD_opencv_python3=ON
+
+        # CMAKE
+        -D CMAKE_BUILD_TYPE=Release
+        -D CMAKE_SKIP_RPATH=ON
+        -D CMAKE_CXX_FLAGS=-march=native
+    )
+    
+    cmake "${cmake_args[@]}" ..
+    make
+}
+
+package() {
+    cd "${srcdir}/${_name}"/build
+    make install
+}
+
+# vim:set ts=4 sw=4 et:
