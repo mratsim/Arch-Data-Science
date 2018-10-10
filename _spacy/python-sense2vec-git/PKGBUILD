@@ -1,0 +1,35 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-sense2vec-git
+_pkgname=sense2vec
+pkgver=v1.0.0a0.r13.g0f5ab54
+pkgrel=1
+pkgdesc='Use NLP to go beyond vanilla word2vec'
+arch=('any')
+url='https://github.com/explosion/sense2vec'
+license=('MIT')
+depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-murmurhash' 'python-ujson') 
+makedepends=('git' 'python-setuptools' 'cython')
+conflicts=('python-sense2vec')
+provides=('python-sense2vec')
+source=('git://github.com/explosion/sense2vec.git'
+)
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+  export USE_BLAS=1
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+  python setup.py install --root=${pkgdir} --optimize=1
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-sense2vec
+}
