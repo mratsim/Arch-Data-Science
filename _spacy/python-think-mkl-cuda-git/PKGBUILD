@@ -1,19 +1,18 @@
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 
-pkgname=python-thinc-cuda-git
+pkgname=python-thinc-mkl-cuda-git
 _pkgname=thinc
-pkgver=v6.11.2.r1.g7371c14
+pkgver=v6.11.2.r41.g98aa064
 pkgrel=1
 pkgdesc="spaCy\'s Machine Learning library for NLP in Python (CUDA accelerated)"
 arch=('any')
 url='https://github.com/explosion/thinc'
 license=('MIT')
-depends=('python-numpy' 'python-cupy' 'python-cymem' 'python-preshed' 'python-murmurhash' 'python-six' 'python-pytest' 'python-hypothesis' 'python-tqdm' 'python-cytoolz' 'python-plac' 'python-mock' 'python-termcolor' 'python-wrapt' 'python-dill')
-makedepends=('git' 'python-setuptools' 'cython')
+depends=('python-numpy' 'python-cupy' 'python-cymem' 'python-preshed' 'python-murmurhash' 'python-six' 'python-tqdm' 'python-cytoolz' 'python-plac' 'python-wrapt' 'python-dill' 'intel-mkl' 'python-msgpack' 'python-msgpack-numpy' 'python-pathlib')
+makedepends=('git' 'python-setuptools' 'cython' 'intel-compiler-base')
 conflicts=('python-thinc')
 provides=('python-thinc')
-source=('git://github.com/explosion/thinc.git'
-)
+source=('git://github.com/explosion/thinc.git')
 md5sums=('SKIP' )
 
 pkgver() {
@@ -26,15 +25,17 @@ build() {
   cd $_pkgname
   export CUDA_HOME=/opt/cuda
   export PATH=$PATH:$CUDA_HOME/bin
-  export CUDA9=1 # See https://github.com/explosion/spaCy/issues/1530
+  # export CUDA9=1 # See https://github.com/explosion/spaCy/issues/1530 and 
+  export THINC_BLAS=/opt/intel/mkl/lib/intel64/libmkl_rt.so
+
+  source /opt/intel/mkl/bin/mklvars.sh intel64
+  source /opt/intel/pkg_bin/compilervars.sh intel64
 
   python setup.py build
 }
 
 package() {
   cd $_pkgname
-
   python setup.py install --root=${pkgdir} --optimize=1
-
   install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-thinc
 }

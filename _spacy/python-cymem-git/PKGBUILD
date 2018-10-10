@@ -1,18 +1,18 @@
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 
-pkgname=python-murmurhash-git
-_pkgname=murmurhash
-pkgver=0.26.4.r13.g3745e93
+pkgname=python-cymem-git
+_pkgname=cymem
+pkgver=v1.32.1.dev0.r2.gbb6411b
 pkgrel=1
-pkgdesc='Cython bindings for MurmurHash2'
+pkgdesc='Gate Cython calls to malloc/free behind Python ref-counted objects'
 arch=('any')
-url='https://github.com/explosion/murmurhash'
+url='https://github.com/explosion/cymem'
 license=('MIT')
 depends=('cython')
 makedepends=('git' 'python-setuptools')
-conflicts=('python-murmurhash')
-provides=('python-murmurhash')
-source=('git://github.com/explosion/murmurhash.git')
+conflicts=('python-cymem')
+provides=('python-cymem')
+source=('git://github.com/explosion/cymem.git')
 md5sums=('SKIP' )
 
 pkgver() {

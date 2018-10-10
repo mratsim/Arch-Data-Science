@@ -2,13 +2,13 @@
 
 pkgname=python-preshed-git
 _pkgname=preshed
-pkgver=tmp3.r0.gdb6f6a4
+pkgver=v1.0.1.r0.g534d86a
 pkgrel=1
 pkgdesc='Cython hash tables that assume keys are pre-hashed'
 arch=('any')
 url='https://github.com/explosion/preshed'
 license=('MIT')
-depends=('cython' 'python-cymem' 'python-pytest')
+depends=('cython' 'python-cymem')
 makedepends=('git' 'python-setuptools')
 conflicts=('python-preshed')
 provides=('python-preshed')
