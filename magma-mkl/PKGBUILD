@@ -14,7 +14,10 @@
 _GPU_TARGET=sm_61 # Consumer Pascal
 ##### End
 
-pkgname=magma
+pkgname=('magma-mkl')
+_name=('magma')
+provides=('magma')
+conflicts=('magma')
 pkgver=2.4.0
 pkgrel=1
 pkgdesc="Provides a dense linear algebra library similar to LAPACK but for heterogeneous/hybrid architectures, starting with current 'Multicore+GPU' systems (with CUDA)"
@@ -29,7 +32,7 @@ makedepends=('gcc-fortran'
              'intel-compiler-base'
              'cmake')
 options=('staticlibs')
-source=("http://icl.cs.utk.edu/projectsfiles/${pkgname}/downloads/${pkgname}-${pkgver}.tar.gz")
+source=("http://icl.cs.utk.edu/projectsfiles/${_name}/downloads/${_name}-${pkgver}.tar.gz")
 sha256sums=('4eb839b1295405fd29c8a6f5b4ed578476010bf976af46573f80d1169f1f9a4f')
 
 build() {
