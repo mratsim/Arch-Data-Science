@@ -7,21 +7,26 @@ _name=mkl-dnn
 _mklmlver=2019.0.20180710 # For the MKL link script for optimized SGEMM
 _releasever=0.16
 pkgname=mkl-dnn-git
-pkgver=v0.16.r193.g17c33b59
+pkgver=v0.17.rc.r219.g4bdffc2c
 pkgrel=1
-pkgdesc="Intel® Math Kernel Library for Deep Neural Networks - MKL linked + provides OpenMP runtime"
+pkgdesc="Intel® Math Kernel Library for Deep Neural Networks - MKL linke"
 arch=(x86_64)
 url=https://github.com/intel/mkl-dnn
 license=('APACHE')
 makedepends=('cmake>=2.8')
 depends=('intel-mkl'            # Provides Optimized SGEMM
-         'intel-compiler-base') # Build Intel OpenMP shared lib
-provides=('mkl-dnn' 'openmp')
-conflicts=('mkl-dnn' 'openmp')
+         'intel-compiler-base'  # Build Intel OpenMP shared lib
+	 'openmp'
+	 ) 
+provides=('mkl-dnn')
+conflicts=('mkl-dnn')
 source=('git+https://github.com/intel/mkl-dnn'
-        "https://github.com/intel/$_name/releases/download/v$_releasever/mklml_lnx_$_mklmlver.tgz")
+        # Intel MKL small library - unused we link against full MKL
+        # "https://github.com/intel/$_name/releases/download/v$_releasever/mklml_lnx_$_mklmlver.tgz"
+	)
 sha256sums=('SKIP'
-            'e2233534a9d15c387e22260997af4312a39e9f86f791768409be273b5453c4e6')
+            # 'e2233534a9d15c387e22260997af4312a39e9f86f791768409be273b5453c4e6'
+	    )
 
 pkgver() {
   cd "${_name}"
@@ -29,29 +34,34 @@ pkgver() {
 }
 
 prepare() {
-  if [ -f /usr/lib/libiomp5.so ]; then
-    if $(pacman -Qs $_name > /dev/null); then # Not very robust but it will catch both release and git version
-      error "Please uninstall MKL-DNN before recompiling otherwise Intel OpenMP will not be repackaged.";
-      exit 1
-    fi
-  fi
+  # Make sure we have iomp5.so in LD_LIBRARY_PATH or MKL-DNN will build its own	
+  # if [ -f /usr/lib/libiomp5.so ]; then
+  #   if $(pacman -Qs $_name > /dev/null); then # Not very robust but it will catch both release and git version
+  #     error "Please uninstall MKL-DNN before recompiling otherwise Intel OpenMP will not be repackaged.";
+  #     exit 1
+  #   fi
+  # fi
     
   cd "$srcdir/$_name"
   mkdir -p build external
 
   # "Take advantage of optimized matrix-matrix multiplication (GEMM) function
-  #  from Intel MKL"
-  ln -sf "$srcdir"/mklml_lnx_$_mklmlver external/
+  #  from Intel MKL small library"
+  # ln -sf "$srcdir"/mklml_lnx_$_mklmlver external/
 }
 
 build() {
   cd "$srcdir/$_name/build"
+
+  source /opt/intel/mkl/bin/mklvars.sh intel64
+  source /opt/intel/pkg_bin/compilervars.sh intel64
+
   cmake -DCMAKE_INSTALL_PREFIX="$pkgdir"/usr ..
   make
 }
 
 # check() {
-#   cd "$srcdir/$pkgname-$pkgver/build"
+#   cd "$srcdir/$_name/build"
 #   make test
 # }
 

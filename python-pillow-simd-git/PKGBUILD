@@ -2,7 +2,7 @@
 
 pkgname=python-pillow-simd-git
 _pkgname=pillow-simd
-pkgver=v4.0.0.post0.r1.ga4a5a0fc
+pkgver=v5.3.0.post0.r0.g17582f73
 pkgrel=1
 pkgdesc='Fork of Python Pillow with SIMD (SSE4 and AVX) optimizations'
 arch=('any')
