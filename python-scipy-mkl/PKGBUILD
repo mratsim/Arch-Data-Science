@@ -9,7 +9,7 @@
 # MKL with GCC
 
 pkgname=('python-scipy-mkl')
-pkgver=1.1.0
+pkgver=1.2.0
 pkgrel=1
 pkgdesc="SciPy is open-source software for mathematics, science, and engineering."
 arch=('i686' 'x86_64')
@@ -22,7 +22,7 @@ conflicts=('python-scipy')
 optdepends=('python-pillow: for image saving module')
 checkdepends=('python-nose')
 source=("https://github.com/scipy/scipy/releases/download/v${pkgver}/scipy-${pkgver}.tar.gz")
-md5sums=('aa6bcc85276b6f25e17bcfc4dede8718')
+md5sums=('e57011507865b0b702aff6077d412e03')
 
 build() {
   export CFLAGS="-fopenmp -march=native -O3"
