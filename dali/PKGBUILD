@@ -1,0 +1,55 @@
+# Maintainer: Mamy André-Ratsimbazafy <Github: mratsim>
+
+_name=DALI
+pkgname=('dali-git' 'python-dali-git')
+pkgver=v0.7.0.dev.r64.gd2bcc4a8
+pkgrel=1
+url='https://github.com/NVIDIA/DALI'
+license=('Apache')
+source=('git+https://github.com/NVIDIA/DALI' 'dali_opencv4.patch')
+makedepends=('cmake' 'git' 'python-setuptools')
+arch=('x86_64')
+sha256sums=('SKIP' 'f77f88ec0a5b684d1b1d1c6b0e69b2ce92d5c11c76155031e01942dcf413e579')
+
+pkgver() {
+  cd "${_name}"
+  git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+prepare() {
+  cd "${_name}"
+  git submodule update --init --recursive
+  patch -d ./ -Np1 -i ${srcdir}/dali_opencv4.patch
+}
+
+build(){
+  export CC=gcc-7
+  export CXX=g++-7
+
+  cd "${_name}"/build # For some reason the build dir alrady exists
+  cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}"/usr -DPROTOBUF_LIBRARY=/usr/lib/libprotobuf.so
+  make
+}
+
+# Buggy at the moment, the DALI pkg is empty
+package_dali-git() {
+  pkgdesc='GPU highly optimized data pre-processing for deep learning'
+  depends=('cuda' 'protobuf' 'libjpeg-turbo' 'opencv' 'ffmpeg')
+  provides=('dali')
+  conflicts=('dali')
+
+  cd "${_name}"/build
+  make install 
+}
+
+package_python-dali-git() {
+  pkgdesc='Library for fast text representation and classification. Python bindings.'
+  depends=('python' 'cuda' 'protobuf' 'libjpeg-turbo' 'opencv' 'ffmpeg')
+  conflicts=('python-dali')
+  provides=('python-dali')
+
+  cd "${_name}"/build/dali/python/
+  python setup.py install --root="${pkgdir}" --optimize=1
+}
+
+# vim:set ts=2 sw=2 et:
