@@ -1,15 +1,17 @@
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 
-pkgbase=python-pytorch-vision-git
-pkgname=('python-pytorch-vision-git' 'python2-pytorch-vision-git')
+pkgname=python-pytorch-vision-git
 _pkgname=vision
-pkgver=v0.1.9.r82.gc1746a2
+pkgver=v0.2.1.r75.g98ca260
 pkgrel=1
 pkgdesc='Datasets, Transforms and Models specific to Computer Vision'
 arch=('any')
 url='https://github.com/pytorch/vision'
 license=('BSD:3-clause')
-makedepends=('git' 'python-setuptools' 'python2-setuptools')
+makedepends=('git' 'python-setuptools')
+depends=('python-numpy' 'python-pytorch' 'python-six' 'python-pillow')
+conflicts=('python-pytorch-vision' 'python-torchvision')
+provides=('python-pytorch-vision' 'python-torchvision')
 source=('git://github.com/pytorch/vision.git'
 )
 md5sums=('SKIP' )
@@ -19,43 +21,13 @@ pkgver() {
   git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
-prepare() {
-  cd "$srcdir/"
-
-  cp -a "${_pkgname}" "${_pkgname}-py2"
-  cd "${_pkgname}"
-  sed -e "s|#![ ]*/usr/bin/python$|#!/usr/bin/python2|" \
-      -e "s|#![ ]*/usr/bin/env python$|#!/usr/bin/env python2|" \
-      -e "s|#![ ]*/bin/env python$|#!/usr/bin/env python2|" \
-      -i $(find . -name '*.py')
-}
-
 build() {
   cd "$srcdir/$_pkgname"
   python setup.py build
-
-  cd "$srcdir/$_pkgname"-py2
-  python2 setup.py build
-
 }
 
-package_python-pytorch-vision-git() {
-  depends=('python-numpy' 'python-pytorch' 'python-six' 'python-pillow')
-  conflicts=('python-pytorch-vision')
-  provides=('python-pytorch-vision')
-  cd "$srcdir/$_pkgname"
-
-  python setup.py install --root=${pkgdir} --optimize=1
-
-  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/${pkgname}
-}
-package_python2-pytorch-vision-git() {
-  depends=('python2-numpy' 'python2-pytorch' 'python2-six' 'python2-pillow')
-  conflicts=('python2-pytorch-vision')
-  provides=('python2-pytorch-vision')
-  cd "$srcdir/$_pkgname"-py2
-
-  python2 setup.py install --root=${pkgdir} --optimize=1
-
-  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/${pkgname}
+package(){
+ cd "$srcdir/$_pkgname"
+ python setup.py install --root=${pkgdir} --optimize=1
+ install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/${pkgname}
 }

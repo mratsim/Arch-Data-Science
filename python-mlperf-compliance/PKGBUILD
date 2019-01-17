@@ -1,0 +1,30 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild {at} gadz {dot} org>
+pkgname=python-mlperf-compliance
+_pkgname=mlperf_compliance
+pkgver=0.0.10
+pkgrel=1
+pkgdesc="Tools for logging MLPerf compliance tags."
+arch=(any)
+url="https://github.com/mlperf/training/tree/master/compliance"
+license=('Apache')
+groups=()
+depends=('python')
+makedepends=('python-setuptools')
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=(!emptydirs)
+install=
+source=("https://files.pythonhosted.org/packages/source/${_pkgname:0:1}/${_pkgname}/${_pkgname}-${pkgver}.tar.gz")
+sha256sums=(0672c6d753ab9d5446f44c7a97658ceeedd7c89e1e4b9b3cce41e62a918cff72)
+
+package() {
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  # Fix permissions
+  chmod -R a+r ./
+  python setup.py install --root="${pkgdir}/" --optimize=1
+
+}
+
+# vim:set ts=2 sw=2 et:
