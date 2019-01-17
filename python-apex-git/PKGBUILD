@@ -1,0 +1,40 @@
+# Maintainer: Mamy Ratsimbazafy <mamy_github {at} numforge {dot} co>
+pkgname=python-apex-git
+_pkgname=apex
+pkgver=r226.3c7a0e4
+pkgrel=1
+pkgdesc="PyTorch extension for easy mixed precision and distributed training"
+arch=(any)
+url="https://github.com/NVIDIA/apex"
+license=('BSD3')
+groups=()
+depends=('python' 'python-pytorch-cuda')
+makedepends=('python-setuptools' 'git')
+provides=('python-apex')
+conflicts=('python-apex')
+replaces=()
+backup=()
+options=(!emptydirs)
+install=
+source=('git://github.com/NVIDIA/apex.git')
+sha256sums=(SKIP)
+
+pkgver() {
+  cd $_pkgname
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd $_pkgname
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-apex
+}
+
+# vim:set ts=2 sw=2 et:
+ 

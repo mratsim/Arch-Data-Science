@@ -5,16 +5,16 @@
 
 pkgname=("python-pytorch-magma-mkldnn-cudnn-git")
 _pkgname="pytorch"
-pkgver=v1.0rc0.r2041.g8c55e56c37
+pkgver=v1.0rc0.r2098.gded4ff87af
 pkgrel=1
 pkgdesc="Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 arch=('x86_64')
 url="https://pytorch.org"
 license=('BSD')
-depends=('python' 'python-yaml' 'python-numpy' 'opencv' 'intel-mkl' 'mkl-dnn' 'cuda' 'cudnn' 'magma' 'nccl' 'cub')
+depends=('python' 'python-yaml' 'python-numpy' 'opencv' 'intel-mkl' 'intel-mpi' 'mkl-dnn' 'cuda' 'cudnn' 'magma' 'nccl' 'cub')
 makedepends=('python-setuptools' 'cmake' 'git' 'intel-compiler-base')
-provides=('python-pytorch')
-conflicts=('python-pytorch')
+provides=('python-pytorch' 'python-pytorch-cuda')
+conflicts=('python-pytorch' 'python-pytorch-cuda')
 source=("git+https://github.com/pytorch/pytorch.git")
 sha256sums=('SKIP')
 
@@ -33,6 +33,7 @@ build() {
   export USE_OPENCV=ON 
   export USE_FFMPEG=ON
   export USE_MKLDNN=ON
+  export USE_OPENMP=ON
   export USE_NNPACK=ON # A bit redundant with MKLDNN hopefully PyTorch choose the best depending on op
   export USE_CUDA=ON
   export USE_CUDNN=ON
@@ -80,6 +81,9 @@ package() {
   cd "$srcdir/${_pkgname}"
   python setup.py install --root="$pkgdir"/ --optimize=1 --skip-build
   install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.txt"
+  
+  msg2 "Pytorch has been build against Intel MPI, make sure to add '/opt/intel/composerxe/linux/mpi/intel64/libfabric/lib/' to /etc/ld.so.conf.d/intel-mpi.conf"
+  msg2 "If OpenCV is built against Intel Parallel Studio, PyTorch will link against intel-tbb_psxe. The current one specifies a wrong path '/opt/intel/composerxe/tbb/lib/intel64/gcc4.7' in /etc/ld.so.conf.d/intel-tbb.conf, it should be either '/opt/intel/tbb/lib/intel64/gcc4.7' or '/opt/intel/composerxe/linux/tbb/lib/intel64/gcc4.7'"
 }
 
 # vim:set ts=2 sw=2 et:
