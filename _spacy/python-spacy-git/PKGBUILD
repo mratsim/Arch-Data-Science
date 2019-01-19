@@ -2,7 +2,7 @@
 
 pkgname=python-spacy-git
 _pkgname=spacy
-pkgver=v2.0.13.dev2.r59.g4cd9ec0f
+pkgver=v2.0.18.r40.g021d0406
 pkgrel=1
 pkgdesc='Industrial-strength Natural Language Processing (NLP) with Python and Cython'
 arch=('any')

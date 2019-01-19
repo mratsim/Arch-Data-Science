@@ -3,14 +3,14 @@
 
 pkgname=python-cupy-cudnn-git
 _pkgname=cupy
-pkgver=v5.0.0rc1.r147.g25cf36eea
+pkgver=v6.0.0b1.r259.g8dce7b57a
 pkgrel=1
 pkgdesc='NumPy-like API accelerated with CUDA'
 arch=('any')
 url='https://github.com/cupy/cupy'
 license=('custom')
-depends=('python-numpy' 'python-six' 'cuda' 'cudnn' 'python-fastrlock')
-makedepends=('git' 'python-setuptools')
+depends=('python-numpy' 'python-six' 'cuda' 'cudnn' 'python-fastrlock' 'nccl')
+makedepends=('git' 'python-setuptools' 'cython')
 conflicts=('python-cupy')
 provides=('python-cupy')
 source=('git://github.com/cupy/cupy.git')

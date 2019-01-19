@@ -1,18 +1,19 @@
+
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 
-pkgname=python-murmurhash-git
-_pkgname=murmurhash
-pkgver=v1.0.1.r0.gfef7932
+pkgname=cython-blis-git
+_pkgname=cython-blis
+pkgver=v0.2.2.r7.gcf68de3
 pkgrel=1
-pkgdesc='Cython bindings for MurmurHash2'
+pkgdesc='Cython BLIS: Fast BLAS-like operations from Python and Cython'
 arch=('any')
-url='https://github.com/explosion/murmurhash'
+url='https://github.com/explosion/cython-blis'
 license=('MIT')
-depends=('cython')
+depends=('python-numpy' 'cython')
 makedepends=('git' 'python-setuptools')
-conflicts=('python-murmurhash')
-provides=('python-murmurhash')
-source=('git://github.com/explosion/murmurhash.git')
+conflicts=('cython-blis')
+provides=('cython-blis')
+source=('git://github.com/explosion/cython-blis.git')
 md5sums=('SKIP' )
 
 pkgver() {
@@ -23,14 +24,10 @@ pkgver() {
 
 build() {
   cd $_pkgname
-
   python setup.py build
 }
 
 package() {
   cd $_pkgname
-
   python setup.py install --root=${pkgdir} --optimize=1
-
-  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
 }

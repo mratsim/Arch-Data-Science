@@ -1,0 +1,33 @@
+  
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-nvidia-ml-git
+_pkgname=nvidia-ml-py3
+pkgver=r3.9775d1f
+pkgrel=1
+pkgdesc='Python 3 Bindings for the NVIDIA Management Library '
+arch=('any')
+url='https://github.com/nicolargo/nvidia-ml-py3'
+license=('BSD')
+depends=('python' 'nvidia')
+makedepends=()
+conflicts=('python-nvidia-ml')
+provides=('python-nvidia-ml')
+source=('git://github.com/nicolargo/nvidia-ml-py3.git')
+md5sums=('SKIP')
+
+pkgver() {
+  cd $_pkgname
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd $_pkgname
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+  python setup.py install --root=${pkgdir} --optimize=1
+}
+ 

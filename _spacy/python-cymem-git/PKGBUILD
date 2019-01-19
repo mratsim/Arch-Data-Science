@@ -2,7 +2,7 @@
 
 pkgname=python-cymem-git
 _pkgname=cymem
-pkgver=v1.32.1.dev0.r2.gbb6411b
+pkgver=v2.0.2.r0.gface8eb
 pkgrel=1
 pkgdesc='Gate Cython calls to malloc/free behind Python ref-counted objects'
 arch=('any')
