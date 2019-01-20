@@ -1,0 +1,35 @@
+ 
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-fastprogress-git
+_pkgname=fastprogress
+pkgver=0.1.18.r16.g4f44827
+pkgrel=1
+pkgdesc='Simple and flexible progress bar for Jupyter Notebook and console '
+arch=('any')
+url='https://github.com/fastai/fastprogress'
+license=('Apache')
+depends=('python')
+makedepends=()
+conflicts=('python-fastprogress')
+provides=('python-fastprogress')
+source=('git://github.com/fastai/fastprogress.git')
+md5sums=('SKIP')
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+  python setup.py install --root=${pkgdir} --optimize=1
+}
+ 

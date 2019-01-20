@@ -1,0 +1,40 @@
+  
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-fastai-git
+_pkgname=fastai
+pkgver=1.0.36.post1.r505.g8b12289d
+pkgrel=1
+pkgdesc='The fastai library simplifies training fast and accurate neural nets using modern best practices.'
+arch=('any')
+url='https://github.com/fastai/fastai'
+license=('Apache')
+depends=(
+  'python' 'python-bottleneck' 'python-fastprogress' 'python-beautifulsoup4'
+  'python-matplotlib' 'python-numexpr' 'python-numpy'
+  'python-nvidia-ml' 'python-pandas' 'python-packaging' 'python-pillow'
+  'python-pyaml' 'python-requests' 'python-scipy'
+  'python-spacy' 'python-pytorch' 'python-pytorch-vision'
+)
+makedepends=()
+conflicts=('python-fastai')
+provides=('python-fastai')
+source=('git://github.com/fastai/fastai.git')
+md5sums=('SKIP')
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+  python setup.py install --root=${pkgdir} --optimize=1
+}
+ 
