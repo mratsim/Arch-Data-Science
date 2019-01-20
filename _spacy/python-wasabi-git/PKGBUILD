@@ -1,18 +1,18 @@
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 
-pkgname=python-thinc-mkl-cuda-git
-_pkgname=thinc
-pkgver=v7.0.0.dev6.r0.gf26cb395
+pkgname=python-wasabi-git
+_pkgname=wasabi
+pkgver=v0.0.15.r0.g4ff962b
 pkgrel=1
-pkgdesc="spaCy\'s Machine Learning library for NLP in Python (CUDA accelerated)"
+pkgdesc="A lightweight console printing and formatting toolkit "
 arch=('any')
-url='https://github.com/explosion/thinc'
+url='https://github.com/ines/wasabi'
 license=('MIT')
-depends=('python-numpy' 'python-cupy' 'python-cymem' 'python-preshed' 'python-murmurhash' 'python-six' 'python-tqdm' 'python-cytoolz' 'python-plac' 'python-wrapt' 'python-dill' 'intel-mkl' 'python-msgpack' 'python-msgpack-numpy' 'python-pathlib')
-makedepends=('git' 'python-setuptools' 'cython' 'intel-compiler-base')
-conflicts=('python-thinc')
-provides=('python-thinc')
-source=('git://github.com/explosion/thinc.git')
+depends=('python')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-wasabi')
+provides=('python-wasabi')
+source=('git://github.com/ines/wasabi.git')
 md5sums=('SKIP' )
 
 pkgver() {

@@ -1,0 +1,38 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-thinc-gpu-ops-git
+_pkgname=thinc_gpu_ops
+pkgver=v0.0.3.r0.gcd59ad8
+pkgrel=1
+pkgdesc="Additional CUDA kernels for Thinc"
+arch=('any')
+url='https://github.com/explosion/thinc_gpu_ops'
+license=('MIT')
+depends=('python' 'cuda' 'python-numpy')
+makedepends=('git' 'python-setuptools' 'cython')
+conflicts=('python-thinc-gpu-ops')
+provides=('python-thinc-gpu-ops')
+source=('git://github.com/explosion/thinc_gpu_ops.git')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+  export CUDA_HOME=/opt/cuda
+  export PATH=$PATH:$CUDA_HOME/bin
+
+  source /opt/intel/mkl/bin/mklvars.sh intel64
+  source /opt/intel/pkg_bin/compilervars.sh intel64
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+  python setup.py install --root=${pkgdir} --optimize=1
+}

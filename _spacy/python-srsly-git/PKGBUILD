@@ -1,0 +1,35 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-srsly-git
+_pkgname=srsly
+pkgver=v0.0.4.r6.gb22275d
+pkgrel=1
+pkgdesc='Modern high-performance serialization utilities for Python'
+arch=('any')
+url='https://github.com/explosion/spaCy'
+license=('MIT')
+depends=('python-pathlib')
+makedepends=('git' 'python-setuptools' 'cython' 'python-pytz' 'python-numpy')
+conflicts=('python-srsly')
+provides=('python-srsly')
+source=('git://github.com/explosion/srsly.git'
+)
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+  python setup.py install --root=${pkgdir} --optimize=1
+
+}
