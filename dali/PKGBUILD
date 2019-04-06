@@ -43,7 +43,7 @@ package_dali-git() {
 }
 
 package_python-dali-git() {
-  pkgdesc='Library for fast text representation and classification. Python bindings.'
+  pkgdesc='GPU highly optimized data pre-processing for deep learning. Python bindings.'
   depends=('python' 'cuda' 'protobuf' 'libjpeg-turbo' 'opencv' 'ffmpeg')
   conflicts=('python-dali')
   provides=('python-dali')
