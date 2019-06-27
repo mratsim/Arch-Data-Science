@@ -2,14 +2,14 @@
 
 _name=DALI
 pkgname=('dali-git' 'python-dali-git')
-pkgver=v0.7.0.dev.r64.gd2bcc4a8
+pkgver=v0.12.0.dev.r49.g535182b8
 pkgrel=1
 url='https://github.com/NVIDIA/DALI'
 license=('Apache')
-source=('git+https://github.com/NVIDIA/DALI' 'dali_opencv4.patch')
+source=('git+https://github.com/NVIDIA/DALI' )
 makedepends=('cmake' 'git' 'python-setuptools')
 arch=('x86_64')
-sha256sums=('SKIP' 'f77f88ec0a5b684d1b1d1c6b0e69b2ce92d5c11c76155031e01942dcf413e579')
+sha256sums=('SKIP')
 
 pkgver() {
   cd "${_name}"
@@ -19,14 +19,14 @@ pkgver() {
 prepare() {
   cd "${_name}"
   git submodule update --init --recursive
-  patch -d ./ -Np1 -i ${srcdir}/dali_opencv4.patch
 }
 
 build(){
-  export CC=gcc-7
-  export CXX=g++-7
+  export CC=gcc-8
+  export CXX=g++-8
 
-  cd "${_name}"/build # For some reason the build dir alrady exists
+  mkdir -p  "${_name}"/build 
+  cd "${_name}"/build
   cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}"/usr -DPROTOBUF_LIBRARY=/usr/lib/libprotobuf.so
   make
 }

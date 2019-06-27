@@ -5,7 +5,7 @@
 
 pkgname=("python-pytorch-magma-mkldnn-cudnn-git")
 _pkgname="pytorch"
-pkgver=v1.0rc0.r2098.gded4ff87af
+pkgver=v1.0rc0.r5274.g6f0f7e316d
 pkgrel=1
 pkgdesc="Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 arch=('x86_64')
@@ -38,15 +38,17 @@ build() {
   export USE_CUDA=ON
   export USE_CUDNN=ON
   export USE_NCCL=ON
+  export USE_SYSTEM_NCCL=ON
   export USE_OPENCL=OFF
   export USE_ROCM=OFF
   export USE_OPENMP=ON
   export USE_NUMPY=ON
   export USE_MAGMA=ON
+  export USE_NATIVE_ARCH=ON
   
-  export CC=gcc-7
-  export CXX=g++-7
-  export CUDAHOSTCXX=g++-7
+  export CC=gcc-8
+  export CXX=g++-8
+  export CUDAHOSTCXX=g++-8
   export CUDA_HOME=/opt/cuda
   export CUDNN_LIB_DIR=/usr/lib
   export CUDNN_INCLUDE_DIR=/usr/include

@@ -11,14 +11,15 @@
 #_GPU_TARGET=Pascal
 #_GPU_TARGET=Volta
 # Can also be one of these: sm_20 sm_30 sm_50 sm_60 sm_70 etc.
-_GPU_TARGET=sm_61 # Consumer Pascal
+_GPU_TARGET=sm_75 # Consumer Turing 
 ##### End
 
 pkgname=('magma-mkl')
 _name=('magma')
 provides=('magma')
 conflicts=('magma')
-pkgver=2.5.0
+pkgver=2.5.1alpha1
+_pkgver=2.5.1-alpha1
 pkgrel=1
 pkgdesc="Provides a dense linear algebra library similar to LAPACK but for heterogeneous/hybrid architectures, starting with current 'Multicore+GPU' systems (with CUDA)"
 arch=('x86_64')
@@ -32,11 +33,11 @@ makedepends=('gcc-fortran'
              'intel-compiler-base'
              'cmake')
 options=('staticlibs')
-source=("http://icl.cs.utk.edu/projectsfiles/${_name}/downloads/${_name}-${pkgver}.tar.gz")
-sha256sums=('4fd45c7e46bd9d9124253e7838bbfb9e6003c64c2c67ffcff02e6c36d2bcfa33')
+source=("http://icl.cs.utk.edu/projectsfiles/${_name}/downloads/${_name}-${_pkgver}.tar.gz")
+sha256sums=('0576ddef07e049e2674fa87caca06ffe96f8d92134ed8aea387b9523be0d7c77')
 
 build() {
-  cd "${srcdir}/magma-${pkgver}"
+  cd "${srcdir}/magma-${_pkgver}"
   mkdir -p build-shared && pushd build-shared
 
   source /opt/intel/mkl/bin/mklvars.sh intel64
@@ -52,7 +53,7 @@ build() {
   if [[ -f "/usr/lib/ccache/bin/nvcc-ccache" ]] ; then
     cmake \
       -DCUDA_NVCC_EXECUTABLE=/usr/lib/ccache/bin/nvcc-ccache \
-      -DCUDA_HOST_COMPILER=/usr/lib/ccache/bin/gcc-7 \
+      -DCUDA_HOST_COMPILER=/usr/lib/ccache/bin/gcc-8 \
       ..
   fi
   make magma magma_sparse
@@ -68,7 +69,7 @@ build() {
   if [[ -f "/usr/lib/ccache/bin/nvcc-ccache" ]] ; then
     cmake \
       -DCUDA_NVCC_EXECUTABLE=/usr/lib/ccache/bin/nvcc-ccache \
-      -DCUDA_HOST_COMPILER=/usr/lib/ccache/bin/gcc-7 \
+      -DCUDA_HOST_COMPILER=/usr/lib/ccache/bin/gcc-8 \
       ..
   fi
   make magma magma_sparse
@@ -76,22 +77,22 @@ build() {
 }
 
 package() {
-  cd "${srcdir}/magma-${pkgver}/build-shared"
+  cd "${srcdir}/magma-${_pkgver}/build-shared"
   # do not build test
   sed -i "s/install: preinstall/install: magma_sparse/g" Makefile
   make DESTDIR="${pkgdir}" install
-  cd "${srcdir}/magma-${pkgver}/build-static"
+  cd "${srcdir}/magma-${_pkgver}/build-static"
   # do not build test
   sed -i "s/install: preinstall/install: magma_sparse/g" Makefile
   make DESTDIR="${pkgdir}" install
 
   mkdir -p ${pkgdir}/opt/magma/example
-  cp -ru ${srcdir}/magma-${pkgver}/example/* ${pkgdir}/opt/magma/example/
+  cp -ru ${srcdir}/magma-${_pkgver}/example/* ${pkgdir}/opt/magma/example/
   mkdir -p ${pkgdir}/opt/magma/testing
-  cp -ru ${srcdir}/magma-${pkgver}/testing/* ${pkgdir}/opt/magma/testing/
+  cp -ru ${srcdir}/magma-${_pkgver}/testing/* ${pkgdir}/opt/magma/testing/
   rm -rf ${pkgdir}/opt/magma/lib/pkgconfig
   mkdir -p ${pkgdir}/usr/share/licenses/magma
-  cp ${srcdir}/magma-${pkgver}/COPYRIGHT ${pkgdir}/usr/share/licenses/magma/LICENSE
+  cp ${srcdir}/magma-${_pkgver}/COPYRIGHT ${pkgdir}/usr/share/licenses/magma/LICENSE
 }
 
 # vim:set ts=2 sw=2 et:

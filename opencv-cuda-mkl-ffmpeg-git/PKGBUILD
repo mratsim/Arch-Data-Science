@@ -38,7 +38,7 @@ depends=(# Always on codecs
          'hdf5'
          )
 makedepends=('git' 'cmake' 'python-numpy' 'mesa'
-             'gcc7'         # Required by CUDA
+             'gcc8'         # Required by CUDA
     )
 optdepends=(
             'libcl: For coding with OpenCL'
@@ -98,9 +98,9 @@ build() {
     # sed -i 's#\${MKL_ROOT_DIR}/\.\./tbb/lib/\${MKL_ARCH}#\${TBB_ENV_LIB}#' cmake/OpenCVFindMKL.cmake 
     patch <"${srcdir}/fix_mkl_tbb_detection.patch" cmake/OpenCVFindMKL.cmake
     
-    # current nvcc supports up to GCC 7
-    export CC=$(which gcc-7)
-    export CXX=$(which g++-7)
+    # current nvcc supports up to GCC 8
+    export CC=$(which gcc-8)
+    export CXX=$(which g++-8)
     mkdir -p build && cd build
 
     # Available flags https://github.com/opencv/opencv/blob/c1db75e0c7b1584b555242ec53fbef5f71d0c48f/CMakeLists.txt#L198
