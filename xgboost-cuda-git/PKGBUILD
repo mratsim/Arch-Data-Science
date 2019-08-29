@@ -5,7 +5,7 @@ pkgbase=xgboost-cuda-git
 pkgname=('xgboost-cuda-git'
          'python-xgboost-git'
          'python2-xgboost-git')
-pkgver=r3279.3ee725e3
+pkgver=r3862.0184eb5d
 pkgrel=1
 url='https://github.com/dmlc/xgboost'
 license=('APACHE')
@@ -13,12 +13,13 @@ source=('git+https://github.com/dmlc/xgboost.git'
         'git+https://github.com/dmlc/dmlc-core'
         'git+https://github.com/dmlc/rabit'
         'python_no_libs.patch')
+depends=('nccl')
 makedepends=('python2-setuptools' 'python-setuptools')
 arch=('x86_64')
 sha256sums=('SKIP'
             'SKIP'
             'SKIP'
-            'dd66a09be68f38fef140c948027e44e3733778e741c84491124b5de8acf6c336')
+            'c717e84c937ce3c6bb710f39ddcf0588e61deb0e356836abd0257158703b225e')
 
 pkgver() {
   cd "${_name}"
@@ -36,8 +37,9 @@ prepare() {
 
 build() {
   cd "${_name}"
-  CC=gcc-6 CXX=g++-6 cmake -DUSE_CUDA=ON -DGPU_COMPUTE_VER=61 # Pascal = 6.1 # -DUSE_AVX=ON doesn't compile :/
-  CC=gcc-6 CXX=g++-6 make -j
+  # Turing = 7.5
+  CC=gcc-8 CXX=g++-8 cmake -DUSE_CUDA=ON -DGPU_COMPUTE_VER=75 -DUSE_NCCL=ON -DBUILD_WITH_SHARED_NCCL=ON
+  CC=gcc-8 CXX=g++-8 make -j
 }
 
 package_xgboost-cuda-git() {
@@ -62,7 +64,6 @@ package_xgboost-cuda-git() {
   mkdir -p "${pkgdir}/usr/lib"
   find . -name \*.a
   find . -name \*.so
-  install -Dm644 libgpuxgboost.a "${pkgdir}/usr/lib"
   install -Dm644 lib/libxgboost.so "${pkgdir}/usr/lib"
 
   # Install includes
