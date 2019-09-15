@@ -5,13 +5,13 @@
 
 pkgname=("python-pytorch-magma-mkldnn-cudnn-git")
 _pkgname="pytorch"
-pkgver=v1.0rc0.r5274.g6f0f7e316d
+pkgver=v1.0rc0.r7013.ga2e5445fcf
 pkgrel=1
 pkgdesc="Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 arch=('x86_64')
 url="https://pytorch.org"
 license=('BSD')
-depends=('python' 'python-yaml' 'python-numpy' 'opencv' 'intel-mkl' 'intel-mpi' 'mkl-dnn' 'cuda' 'cudnn' 'magma' 'nccl' 'cub')
+depends=('python' 'python-yaml' 'python-numpy' 'opencv' 'intel-mkl' 'intel-mpi' 'cuda' 'cudnn' 'magma' 'nccl' 'cub' 'numactl' 'protobuf' 'mkl-dnn-git')
 makedepends=('python-setuptools' 'cmake' 'git' 'intel-compiler-base')
 provides=('python-pytorch' 'python-pytorch-cuda')
 conflicts=('python-pytorch' 'python-pytorch-cuda')
@@ -30,50 +30,70 @@ prepare() {
 }
 
 build() {
+  # Caffe2 related
+  export BUILD_CAFFE2_OPS=OFF
+  export BUILD_CAFFE2_MOBILE=OFF
+
+  # Tests
+  export ATEN_NO_TEST=ON
+  export BUILD_TEST=OFF
+
+  # Vendor modules
+  export BUILD_CUSTOM_PROTOBUF=OFF
   export USE_OPENCV=ON 
   export USE_FFMPEG=ON
-  export USE_MKLDNN=ON
-  export USE_OPENMP=ON
+  export USE_MKLDNN=ON 
   export USE_NNPACK=ON # A bit redundant with MKLDNN hopefully PyTorch choose the best depending on op
+  export USE_NUMPY=ON
+  export USE_MAGMA=ON
+
+  # CPU & GPU Arch
+  export USE_NUMA=ON
+  export USE_OPENCL=OFF
+  export USE_ROCM=OFF
+  export USE_OPENMP=ON
   export USE_CUDA=ON
   export USE_CUDNN=ON
   export USE_NCCL=ON
   export USE_SYSTEM_NCCL=ON
-  export USE_OPENCL=OFF
-  export USE_ROCM=OFF
-  export USE_OPENMP=ON
-  export USE_NUMPY=ON
-  export USE_MAGMA=ON
   export USE_NATIVE_ARCH=ON
+  export MKLDNN_USE_NATIVE_ARCH=ON
   
+  # Compiling and linking
   export CC=gcc-8
   export CXX=g++-8
   export CUDAHOSTCXX=g++-8
   export CUDA_HOME=/opt/cuda
   export CUDNN_LIB_DIR=/usr/lib
   export CUDNN_INCLUDE_DIR=/usr/include
+  export NCCL_INCLUDE_DIR=/usr/include
+  export NCCL_LIB_DIR=/usr/lib
   export TORCH_CUDA_ARCH_LIST="7.5" # Consumer Turing
   export MAGMA_HOME=/opt/magma 
   export OPENCV_INCLUDE_DIRS=/usr/include/opencv4
   export FFMPEG_INCLUDE_DIR=/usr/include # libavcodec, libavutils
   export FFMPEG_LIBRARIES=/usr/lib # libavcodec
+  # Don't use ideep custom build for MKLDNN
+  export MKLDNN_LIBRARIES=/usr/lib
+  export MKLDNN_INCLUDE_DIR=/usr/include
+
   export CUB_INCLUDE_DIRS=/usr/include # For system CUB, otherwise PyTorch picks it from thirdparty submodules
 
   # Link to Intel OpenMP like MKL-DNN
   # https://github.com/pytorch/pytorch/issues/12535
+  # https://github.com/pytorch/pytorch/pull/15820
+  # https://github.com/pytorch/pytorch/issues/19764
   export OpenMP_C_FLAGS="-liomp5"
   export OpenMP_CXX_FLAGS="-liomp5"
   export OpenMP_C_LIB_NAMES="iomp5"
   export OpenMP_CXX_LIB_NAMES="iomp5"
   export CMAKE_EXE_LINKER_FLAGS="-liomp5"
+  export MKL_OPENMP_TYPE="Intel"
+  export MKL_OPENMP_LIBRARY="/opt/intel/lib/libiomp5"
 
   source /opt/intel/mkl/bin/mklvars.sh intel64
   source /opt/intel/pkg_bin/compilervars.sh intel64
   
-  # Python flags  
-  export NO_CUDA=0
-  export WITH_CUDNN=1
-
 
   cd "$srcdir/${_pkgname}"
   python setup.py build
@@ -85,7 +105,7 @@ package() {
   install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.txt"
   
   msg2 "Pytorch has been build against Intel MPI, make sure to add '/opt/intel/composerxe/linux/mpi/intel64/libfabric/lib/' to /etc/ld.so.conf.d/intel-mpi.conf"
-  msg2 "If OpenCV is built against Intel Parallel Studio, PyTorch will link against intel-tbb_psxe. The current one specifies a wrong path '/opt/intel/composerxe/tbb/lib/intel64/gcc4.7' in /etc/ld.so.conf.d/intel-tbb.conf, it should be either '/opt/intel/tbb/lib/intel64/gcc4.7' or '/opt/intel/composerxe/linux/tbb/lib/intel64/gcc4.7'"
+  msg2 "If OpenCV is built against Intel Parallel Studio, PyTorch will link against intel-tbb_psxe. The current one specifies a wrong path '/opt/intel/composerxe/tbb/lib/intel64/gcc4.7' in /etc/ld.so.conf.d/intel-tbb.conf, it should be either '/opt/intel/tbb/lib/intel64/libtbb/gcc4.7' or '/opt/intel/composerxe/linux/tbb/lib/intel64/libtbb/gcc4.7'"
 }
 
 # vim:set ts=2 sw=2 et:

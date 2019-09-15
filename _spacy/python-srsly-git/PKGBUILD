@@ -2,11 +2,11 @@
 
 pkgname=python-srsly-git
 _pkgname=srsly
-pkgver=v0.0.4.r6.gb22275d
+pkgver=v0.1.0.r1.gf2a8105
 pkgrel=1
 pkgdesc='Modern high-performance serialization utilities for Python'
 arch=('any')
-url='https://github.com/explosion/spaCy'
+url='https://github.com/explosion/srsly'
 license=('MIT')
 depends=('python-pathlib')
 makedepends=('git' 'python-setuptools' 'cython' 'python-pytz' 'python-numpy')

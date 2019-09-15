@@ -1,18 +1,19 @@
+
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 
-pkgname=python-preshed-git
-_pkgname=preshed
-pkgver=v3.0.0.r0.g16e9db4
+pkgname=python-blis-git
+_pkgname=cython-blis
+pkgver=v0.4.0.r2.gc5df079
 pkgrel=1
-pkgdesc='Cython hash tables that assume keys are pre-hashed'
+pkgdesc='Cython BLIS: Fast BLAS-like operations from Python and Cython'
 arch=('any')
-url='https://github.com/explosion/preshed'
+url='https://github.com/explosion/cython-blis'
 license=('MIT')
-depends=('cython' 'python-cymem')
+depends=('python-numpy' 'cython')
 makedepends=('git' 'python-setuptools')
-conflicts=('python-preshed')
-provides=('python-preshed')
-source=('git://github.com/explosion/preshed.git')
+conflicts=('cython-blis' 'python-blis')
+provides=('cython-blis' 'python-blis')
+source=('git://github.com/explosion/cython-blis.git')
 md5sums=('SKIP' )
 
 pkgver() {
@@ -23,14 +24,10 @@ pkgver() {
 
 build() {
   cd $_pkgname
-
   python setup.py build
 }
 
 package() {
   cd $_pkgname
-
   python setup.py install --root=${pkgdir} --optimize=1
-
-  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-$_pkgname
 }

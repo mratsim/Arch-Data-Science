@@ -2,7 +2,7 @@
 
 pkgname=python-thinc-gpu-ops-git
 _pkgname=thinc_gpu_ops
-pkgver=v0.0.3.r0.gcd59ad8
+pkgver=v0.0.3.r2.gf1cf930
 pkgrel=1
 pkgdesc="Additional CUDA kernels for Thinc"
 arch=('any')

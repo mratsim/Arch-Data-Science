@@ -1,9 +1,9 @@
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz [at] org>
 pkgname=python-plac
 _pkgname=plac
-pkgver=0.9.6
+pkgver=1.1.0
 pkgrel=1
-pkgdesc="The smartest command line arguments parser in the world"
+pkgdesc="Parsing the Command Line the Easy Way"
 arch=(any)
 url="https://github.com/micheles/plac"
 license=('BSD')
@@ -17,7 +17,7 @@ backup=()
 options=(!emptydirs)
 install=
 source=("https://files.pythonhosted.org/packages/source/${_pkgname:0:1}/${_pkgname}/${_pkgname}-${pkgver}.tar.gz")
-md5sums=(c007c0371275c6acb50b16f978735bd0)
+sha256sums=(7c16cfa7422a76b7525fc93d0be5c9c9a2d5250083e80ddac6621edb395dc081)
 
 package() {
   cd "${srcdir}/${_pkgname}-${pkgver}"

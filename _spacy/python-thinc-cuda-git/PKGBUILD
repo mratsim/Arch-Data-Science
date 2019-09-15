@@ -2,17 +2,17 @@
 
 pkgname=python-thinc-cuda-git
 _pkgname=thinc
-pkgver=v7.0.0.dev6.r0.gf26cb395
+pkgver=v7.1.1.r2.gaefe67d4
 pkgrel=1
 pkgdesc="spaCy\'s Machine Learning library for NLP in Python (CUDA accelerated)"
 arch=('any')
 url='https://github.com/explosion/thinc'
 license=('MIT')
 depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-murmurhash'
-  'python-six' 'python-tqdm' 'python-plac' 'python-wrapt' 'python-srsly' 'python-pathlib'
+  'python-tqdm' 'python-plac' 'python-srsly' 'python-pathlib'
   'python-wasabi' 'python-cupy' 'python-thinc-gpu-ops'
   )
-makedepends=('git' 'python-setuptools' 'cython' 'cython-blis')
+makedepends=('git' 'python-setuptools' 'cython' 'python-blis')
 conflicts=('python-thinc')
 provides=('python-thinc')
 source=('git://github.com/explosion/thinc.git')

@@ -1,19 +1,19 @@
-
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 
-pkgname=cython-blis-git
-_pkgname=cython-blis
-pkgver=v0.2.2.r7.gcf68de3
+pkgname=python-standfordnlp-git
+_pkgname=stanfordnlp
+pkgver=v0.2.0.r32.gd270c0b
 pkgrel=1
-pkgdesc='Cython BLIS: Fast BLAS-like operations from Python and Cython'
+pkgdesc='A Python NLP Library for Many Human Languages'
 arch=('any')
-url='https://github.com/explosion/cython-blis'
+url='https://github.com/stanfordnlp/standfordnlp'
 license=('MIT')
-depends=('python-numpy' 'cython')
+depends=('python-numpy' 'python-pytorch' 'python-protobuf' 
+          'python-tqdm' 'python-requests')
 makedepends=('git' 'python-setuptools')
-conflicts=('cython-blis')
-provides=('cython-blis')
-source=('git://github.com/explosion/cython-blis.git')
+conflicts=('python-stanfordnlp')
+provides=('python-stanfordnlp')
+source=('git+https://github.com/stanfordnlp/stanfordnlp')
 md5sums=('SKIP' )
 
 pkgver() {

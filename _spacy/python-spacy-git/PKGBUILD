@@ -2,16 +2,17 @@
 
 pkgname=python-spacy-git
 _pkgname=spacy
-pkgver=v2.1.0a5.r18.gf07b577f
+pkgver=v2.1.8.r300.g88a9d87f6
 pkgrel=1
 pkgdesc='Industrial-strength Natural Language Processing (NLP) with Python and Cython'
 arch=('any')
 url='https://github.com/explosion/spaCy'
 license=('MIT')
-depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-thinc' 'cython-blis'
-          'python-murmurhash' 'python-srsly' 'python-plac' 'python-jsonschema'
-          'python-requests' 'python-regex')
-makedepends=('git' 'python-setuptools' 'cython')
+depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-thinc' 'python-blis'
+          'python-murmurhash' 'python-srsly' 'python-plac' 
+          'python-requests')
+makedepends=('git' 'python-setuptools' 'cython' 'python-jsonschema')
+optdepends=('python-jsonschema')
 conflicts=('python-spacy')
 provides=('python-spacy')
 source=('git+https://github.com/explosion/spacy#branch=develop')
@@ -31,5 +32,4 @@ build() {
 package() {
   cd $_pkgname
   python setup.py install --root=${pkgdir} --optimize=1
-  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-spacy
 }
