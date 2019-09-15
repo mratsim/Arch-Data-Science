@@ -25,7 +25,7 @@ build(){
   export CC=gcc-8
   export CXX=g++-8
 
-  mkdir -p  "${_name}"/build 
+  mkdir -p  "${_name}"/build
   cd "${_name}"/build
   cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}"/usr -DPROTOBUF_LIBRARY=/usr/lib/libprotobuf.so
   make
@@ -39,7 +39,7 @@ package_dali-git() {
   conflicts=('dali')
 
   cd "${_name}"/build
-  make install 
+  make install
 }
 
 package_python-dali-git() {
