@@ -3,7 +3,7 @@
 
 pkgname=python-cupy-cudnn-git
 _pkgname=cupy
-pkgver=v6.0.0b1.r259.g8dce7b57a
+pkgver=v7.0.0b3.r183.g96675b0e9
 pkgrel=1
 pkgdesc='NumPy-like API accelerated with CUDA'
 arch=('any')
@@ -15,6 +15,8 @@ conflicts=('python-cupy')
 provides=('python-cupy')
 source=('git://github.com/cupy/cupy.git')
 md5sums=('SKIP' )
+
+# TODO: Add Nvidia cutensor when publicly available
 
 pkgver() {
   cd $_pkgname

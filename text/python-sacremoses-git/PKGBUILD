@@ -1,0 +1,32 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-sacremoses-git
+_pkgname=sacremoses
+pkgver=r237.eaf6646
+pkgrel=1
+pkgdesc='Moses tokenizer, truecaser and normalizer '
+arch=('any')
+url='https://github.com/alvations/sacremoses'
+license=('LGPL')
+depends=('python' 'python-click' 'python-six' 'python-joblib' 'python-tqdm')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-sacremoses')
+provides=('python-sacremoses')
+source=('git+https://github.com/alvations/sacremoses')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+
+build() {
+  cd $_pkgname
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+  python setup.py install --root=${pkgdir} --optimize=1
+}

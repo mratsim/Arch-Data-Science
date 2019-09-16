@@ -1,19 +1,18 @@
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 
 pkgname=python-spacy-standfordnlp-git
-_pkgname=stanfordnlp
-pkgver=v0.2.0.r32.gd270c0b
+_pkgname=spacy-stanfordnlp
+pkgver=v0.1.3.r0.gaa73711
 pkgrel=1
-pkgdesc='A Python NLP Library for Many Human Languages'
+pkgdesc='Use the latest StanfordNLP research models directly in spaCy '
 arch=('any')
-url='https://github.com/stanfordnlp/standfordnlp'
+url='https://github.com/explosion/spacy-stanfordnlp'
 license=('MIT')
-depends=('python-numpy' 'python-pytorch' 'python-protobuf'
-          'python-tqdm' 'python-requests')
+depends=('python-spacy' 'python-stanfordnlp')
 makedepends=('git' 'python-setuptools')
-conflicts=('python-stanfordnlp')
-provides=('python-stanfordnlp')
-source=('git+https://github.com/stanfordnlp/stanfordnlp')
+conflicts=('python-spacy-stanfordnlp')
+provides=('python-spacy-stanfordnlp')
+source=('git+https://github.com/explosion/spacy-stanfordnlp')
 md5sums=('SKIP' )
 
 pkgver() {

@@ -1,0 +1,33 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-pytorch-transformers-git
+_pkgname=pytorch-transformers
+pkgver=1.2.0.r43.g32e1332
+pkgrel=1
+pkgdesc='State-of-the-art pretrained models for Natural Language Processing (NLP)'
+arch=('any')
+url='https://github.com/huggingface/pytorch-transformers'
+license=('LGPL')
+depends=('python' 'python-pytorch' 'python-boto3' 'python-requests'
+         'python-regex' 'python-sentencepiece' 'python-sacremoses')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-pytorch-transformers')
+provides=('python-pytorch-transformers')
+source=('git+https://github.com/huggingface/pytorch-transformers')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd $_pkgname
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+  python setup.py install --root=${pkgdir} --optimize=1
+}

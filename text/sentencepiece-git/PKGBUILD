@@ -1,0 +1,36 @@
+# Maintainer: Mamy André-Ratsimbazafy <Github: mratsim>
+
+_name=sentencepiece
+pkgname=('sentencepiece-git')
+pkgver=v0.1.83.r5.gbca47c0
+pkgrel=1
+pkgdesc='Unsupervised text tokenizer for Neural Network-based text generation.'
+url='https://github.com/google/sentencepiece'
+license=('Apache')
+source=('git+https://github.com/google/sentencepiece')
+makedepends=('git' 'python-setuptools')
+provides=('sentencepiece')
+conflicts=('sentencepiece')
+arch=('x86_64')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "${_name}"
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+build(){
+  msg2 'Building C++ shared and static lib and standalone binary'
+  cd "${_name}"
+  mkdir -p build && cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}"/usr
+  make
+
+}
+
+package() {
+  cd "${_name}"/build
+  make install
+}
+
+# vim:set ts=2 sw=2 et:

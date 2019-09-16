@@ -3,7 +3,7 @@
 
 pkgname=python-fastrlock-git
 _pkgname=fastrlock
-pkgver=r32.17a4b77
+pkgver=r33.65e360c
 pkgrel=1
 pkgdesc='a fast, re-entrant, optimistic lock for CPython'
 arch=('any')
