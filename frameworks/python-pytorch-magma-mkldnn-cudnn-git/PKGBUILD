@@ -5,13 +5,14 @@
 
 pkgname=("python-pytorch-magma-mkldnn-cudnn-git")
 _pkgname="pytorch"
-pkgver=v1.0rc0.r7013.ga2e5445fcf
+pkgver=v1.0rc0.r7015.g31139b5f9a
 pkgrel=1
 pkgdesc="Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 arch=('x86_64')
 url="https://pytorch.org"
 license=('BSD')
-depends=('python' 'python-yaml' 'python-numpy' 'opencv' 'intel-mkl' 'intel-mpi' 'cuda' 'cudnn' 'magma' 'nccl' 'cub' 'numactl' 'protobuf' 'mkl-dnn-git')
+depends=('python' 'python-yaml' 'python-numpy' 'opencv' 'intel-mkl' 'intel-mpi'
+         'cuda' 'cudnn' 'magma' 'nccl' 'cub' 'numactl' 'protobuf' 'mkl-dnn-git')
 makedepends=('python-setuptools' 'cmake' 'git' 'intel-compiler-base')
 provides=('python-pytorch' 'python-pytorch-cuda')
 conflicts=('python-pytorch' 'python-pytorch-cuda')
@@ -20,6 +21,9 @@ sha256sums=('SKIP')
 
 pkgver() {
   cd "${_pkgname}"
+  # The Arch canonical way is buggy, version is stuck at 1.0 instead at 1.2.0
+  # Hopefully nothing enforces pytorch 1.2 until bug is fixed:
+  # https://github.com/pytorch/pytorch/issues/26258
   git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
@@ -36,13 +40,14 @@ build() {
 
   # Tests
   export ATEN_NO_TEST=ON
-  export BUILD_TEST=OFF
+  # export BUILD_TEST=OFF # Undefined symbol _ZN5torch3jit10testFusionEv
 
   # Vendor modules
   export BUILD_CUSTOM_PROTOBUF=OFF
-  export USE_OPENCV=ON 
+  export USE_OPENCV=ON
   export USE_FFMPEG=ON
-  export USE_MKLDNN=ON 
+  export USE_MKLDNN=ON # TODO: this relies on CMAKE_HOST_SYSTEM_PROCESSOR which relies on uname -p
+                       #       which is unknown on Arch because coreutils requires a patch in each distro :/
   export USE_NNPACK=ON # A bit redundant with MKLDNN hopefully PyTorch choose the best depending on op
   export USE_NUMPY=ON
   export USE_MAGMA=ON
@@ -52,13 +57,20 @@ build() {
   export USE_OPENCL=OFF
   export USE_ROCM=OFF
   export USE_OPENMP=ON
+  export USE_TBB=OFF
   export USE_CUDA=ON
   export USE_CUDNN=ON
   export USE_NCCL=ON
   export USE_SYSTEM_NCCL=ON
   export USE_NATIVE_ARCH=ON
   export MKLDNN_USE_NATIVE_ARCH=ON
-  
+
+  export MKL_THREADING="OMP"
+  export USE_MKLDNN_CBLAS=ON
+
+  # C++11 ABI - https://github.com/pytorch/pytorch/issues/17492
+  # ??? -D_GLIBCXX_USE_CXX11_ABI=1
+
   # Compiling and linking
   export CC=gcc-8
   export CXX=g++-8
@@ -69,7 +81,7 @@ build() {
   export NCCL_INCLUDE_DIR=/usr/include
   export NCCL_LIB_DIR=/usr/lib
   export TORCH_CUDA_ARCH_LIST="7.5" # Consumer Turing
-  export MAGMA_HOME=/opt/magma 
+  export MAGMA_HOME=/opt/magma
   export OPENCV_INCLUDE_DIRS=/usr/include/opencv4
   export FFMPEG_INCLUDE_DIR=/usr/include # libavcodec, libavutils
   export FFMPEG_LIBRARIES=/usr/lib # libavcodec
@@ -89,11 +101,12 @@ build() {
   export OpenMP_CXX_LIB_NAMES="iomp5"
   export CMAKE_EXE_LINKER_FLAGS="-liomp5"
   export MKL_OPENMP_TYPE="Intel"
-  export MKL_OPENMP_LIBRARY="/opt/intel/lib/libiomp5"
+  export MKL_OPENMP_LIBRARY="/opt/intel/lib/libiomp5.so"
 
+  export MKL_FIND_QUIETLY=OFF
   source /opt/intel/mkl/bin/mklvars.sh intel64
   source /opt/intel/pkg_bin/compilervars.sh intel64
-  
+
 
   cd "$srcdir/${_pkgname}"
   python setup.py build
@@ -103,7 +116,7 @@ package() {
   cd "$srcdir/${_pkgname}"
   python setup.py install --root="$pkgdir"/ --optimize=1 --skip-build
   install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.txt"
-  
+
   msg2 "Pytorch has been build against Intel MPI, make sure to add '/opt/intel/composerxe/linux/mpi/intel64/libfabric/lib/' to /etc/ld.so.conf.d/intel-mpi.conf"
   msg2 "If OpenCV is built against Intel Parallel Studio, PyTorch will link against intel-tbb_psxe. The current one specifies a wrong path '/opt/intel/composerxe/tbb/lib/intel64/gcc4.7' in /etc/ld.so.conf.d/intel-tbb.conf, it should be either '/opt/intel/tbb/lib/intel64/libtbb/gcc4.7' or '/opt/intel/composerxe/linux/tbb/lib/intel64/libtbb/gcc4.7'"
 }
