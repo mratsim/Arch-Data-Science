@@ -1,7 +1,7 @@
 # Maintainer: Mamy Ratsimbazafy <mamy_github {at} numforge {dot} co>
 pkgname=python-apex-git
 _pkgname=apex
-pkgver=r461.18f2eae
+pkgver=r585.3ae89c7
 pkgrel=1
 pkgdesc="PyTorch extension for easy mixed precision and distributed training"
 arch=(any)
