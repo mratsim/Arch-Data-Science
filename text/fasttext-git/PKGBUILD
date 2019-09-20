@@ -2,18 +2,18 @@
 
 _name=fastText
 pkgname=('fasttext-git' 'python-fasttext-git')
-pkgver=v0.1.0.r82.ga5d22ab
+pkgver=0.1.0.r149.g252c8a5
 pkgrel=1
 url='https://github.com/facebookresearch/fastText'
 license=('BSD')
 source=('git+https://github.com/facebookresearch/fastText')
-makedepends=('git' 'python-setuptools' 'python-numpy' 'python-scipy' 'python-pybind11')
+makedepends=('git' 'python-setuptools' 'python-numpy' 'python-scipy' 'pybind11')
 arch=('x86_64')
 sha256sums=('SKIP')
 
 pkgver() {
   cd "${_name}"
-  git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare(){
@@ -24,8 +24,8 @@ prepare(){
 build(){
   msg2 'Building C++ shared and static lib and standalone binary'
   cd "${srcdir}"/"${_name}-cpp"
-  mkdir build && cd build 
-  cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}"/usr 
+  mkdir build && cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}"/usr
   make
 
   msg2 'Building Python bindings'
@@ -39,13 +39,13 @@ package_fasttext-git() {
   conflicts=('fasttext')
 
   cd "${_name}"-cpp/build
-  make install 
+  make install
 }
 
 package_python-fasttext-git() {
   pkgdesc='Library for fast text representation and classification. Python bindings'
   depends=('python'
-           'python-pybind11'
+           'pybind11'
            'python-numpy'
            'python-scipy')
   conflicts=('python-fasttext')
