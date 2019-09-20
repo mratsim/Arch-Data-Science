@@ -2,7 +2,7 @@
 
 pkgname=python-mitie-git
 _pkgname=mitie
-pkgver=v0.4.r154.gc8da9049
+pkgver=0.4.r154.gc8da9049
 pkgrel=1
 pkgdesc='NLP Information Extraction'
 arch=('any')
@@ -16,7 +16,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 

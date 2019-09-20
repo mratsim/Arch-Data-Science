@@ -2,7 +2,7 @@
 
 pkgname=python-tpot-git
 _pkgname=tpot
-pkgver=v0.6.r152.g685c971
+pkgver=0.6.r152.g685c971
 pkgrel=1
 pkgdesc='A Python tool that automatically creates and optimizes machine learning pipelines using genetic programming.'
 arch=('any')
@@ -19,7 +19,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 

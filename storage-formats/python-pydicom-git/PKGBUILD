@@ -1,7 +1,7 @@
 # Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
 pkgname=python-pydicom-git
 _pkgname=pydicom
-pkgver=v1.1.0.r89.ga3a7986a
+pkgver=1.1.0.r89.ga3a7986a
 pkgrel=1
 pkgdesc='Read, modify and write DICOM files with python code'
 arch=('any')
@@ -16,7 +16,7 @@ optdepends=('python-numpy: To manipulate pixel data')
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 build() {
