@@ -2,7 +2,7 @@
 
 pkgname=python-thinc-cuda-git
 _pkgname=thinc
-pkgver=v7.1.1.r2.gaefe67d4
+pkgver=7.1.1.r2.gaefe67d4
 pkgrel=1
 pkgdesc="spaCy\'s Machine Learning library for NLP in Python (CUDA accelerated)"
 arch=('any')
@@ -20,7 +20,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 

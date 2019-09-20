@@ -2,7 +2,7 @@
 
 pkgname=python-murmurhash-git
 _pkgname=murmurhash
-pkgver=v1.0.2.r10.g930ddc6
+pkgver=1.0.2.r10.g930ddc6
 pkgrel=1
 pkgdesc='Cython bindings for MurmurHash2'
 arch=('any')
@@ -17,7 +17,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 

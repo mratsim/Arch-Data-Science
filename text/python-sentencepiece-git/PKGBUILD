@@ -2,7 +2,7 @@
 
 _name=sentencepiece
 pkgname=('python-sentencepiece-git')
-pkgver=v0.1.83.r5.gbca47c0
+pkgver=0.1.83.r7.g60e42a7
 pkgrel=1
 pkgdesc='Unsupervised text tokenizer for Neural Network-based text generation. Python bindings'
 url='https://github.com/google/sentencepiece'
@@ -17,7 +17,7 @@ sha256sums=('SKIP')
 
 pkgver() {
   cd "${_name}"
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 build(){

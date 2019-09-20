@@ -2,14 +2,14 @@
 
 pkgname=python-spacy-git
 _pkgname=spacy
-pkgver=v2.1.8.r300.g88a9d87f6
+pkgver=2.1.8.r355.gf2d224756
 pkgrel=1
 pkgdesc='Industrial-strength Natural Language Processing (NLP) with Python and Cython'
 arch=('any')
 url='https://github.com/explosion/spaCy'
 license=('MIT')
 depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-thinc' 'python-blis'
-          'python-murmurhash' 'python-srsly' 'python-plac' 
+          'python-murmurhash' 'python-srsly' 'python-plac'
           'python-requests')
 makedepends=('git' 'python-setuptools' 'cython' 'python-jsonschema')
 optdepends=('python-jsonschema')
@@ -20,7 +20,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 

@@ -3,7 +3,7 @@
 
 pkgname=python-cupy-cudnn-git
 _pkgname=cupy
-pkgver=v7.0.0b3.r183.g96675b0e9
+pkgver=7.0.0b3.r223.g36ecb4423
 pkgrel=1
 pkgdesc='NumPy-like API accelerated with CUDA'
 arch=('any')
@@ -20,7 +20,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 

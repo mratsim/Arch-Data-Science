@@ -2,7 +2,7 @@
 
 pkgname=python-wasabi-git
 _pkgname=wasabi
-pkgver=v0.2.2.r0.g2beb8fe
+pkgver=0.2.2.r0.g2beb8fe
 pkgrel=1
 pkgdesc="A lightweight console printing and formatting toolkit "
 arch=('any')
@@ -17,7 +17,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 

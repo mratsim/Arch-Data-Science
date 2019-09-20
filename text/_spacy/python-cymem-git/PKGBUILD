@@ -2,7 +2,7 @@
 
 pkgname=python-cymem-git
 _pkgname=cymem
-pkgver=v2.0.2.r20.g21e1a99
+pkgver=2.0.2.r20.g21e1a99
 pkgrel=1
 pkgdesc='Gate Cython calls to malloc/free behind Python ref-counted objects'
 arch=('any')
@@ -17,7 +17,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 

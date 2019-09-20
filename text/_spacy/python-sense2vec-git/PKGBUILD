@@ -2,13 +2,13 @@
 
 pkgname=python-sense2vec-git
 _pkgname=sense2vec
-pkgver=v1.0.0a0.r13.g0f5ab54
+pkgver=1.0.0a1.r1.gfff3cec
 pkgrel=1
 pkgdesc='Use NLP to go beyond vanilla word2vec'
 arch=('any')
 url='https://github.com/explosion/sense2vec'
 license=('MIT')
-depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-murmurhash' 'python-ujson') 
+depends=('python-numpy' 'python-cymem' 'python-preshed' 'python-murmurhash' 'python-ujson')
 makedepends=('git' 'python-setuptools' 'cython')
 conflicts=('python-sense2vec')
 provides=('python-sense2vec')
@@ -18,7 +18,7 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 
