@@ -2,7 +2,7 @@
 
 _name=DALI
 pkgname=('dali-git' 'python-dali-git')
-pkgver=v0.12.0.dev.r184.g801c8881
+pkgver=0.12.0.dev.r194.ge079bcff
 pkgrel=1
 url='https://github.com/NVIDIA/DALI'
 license=('Apache')
@@ -13,7 +13,7 @@ sha256sums=('SKIP')
 
 pkgver() {
   cd "${_name}"
-  git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare() {
