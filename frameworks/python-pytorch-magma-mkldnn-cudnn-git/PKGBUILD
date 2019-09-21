@@ -14,9 +14,11 @@ license=('BSD')
 depends=('python' 'python-yaml' 'python-numpy' 'opencv' 'intel-mkl' 'intel-mpi'
          'cuda' 'cudnn' 'magma' 'nccl' 'cub' 'numactl' 'protobuf'
          #  'mkl-dnn-git' # PyTorch builds mkldnn statically
-         #  'pybind11' # system pybind11 breaks sleef.h import - https://github.com/pytorch/pytorch/issues/26555
+         'pybind11' # system pybind11 breaks sleef.h import (?) - https://github.com/pytorch/pytorch/issues/26555
          )
-makedepends=('python-setuptools' 'cmake' 'git' 'intel-compiler-base' 'gcc8' 'google-glog' 'gflags')
+makedepends=('python-setuptools' 'cmake' 'git' 'intel-compiler-base' 'gcc8'
+            #  'google-glog' 'gflags'
+             )
 provides=('python-pytorch' 'python-pytorch-cuda')
 conflicts=('python-pytorch' 'python-pytorch-cuda')
 source=("git+https://github.com/pytorch/pytorch.git")
@@ -37,30 +39,32 @@ prepare() {
 
 build() {
   # sleef.h import issues - https://github.com/pytorch/pytorch/issues/26555
-  # Suspects:
+  # Suspects - combination of:
   #   - systemwide pybind11
   #   or
   #   - BUILD_CAFFE2_OPS=ON
   #   or
   #   - ATEN_NO_TEST=OFF
+  #   or
+  #   - USE_NATIVE_ARCH=ON (see https://github.com/pytorch/pytorch/issues/26403)
 
-  export USE_GFLAGS=ON
-  export USE_GLOG=ON
+  # export USE_GFLAGS=ON
+  # export USE_GLOG=ON
 
   # Caffe2 related
-  export BUILD_CAFFE2_OPS=OFF   # ON will trigger sleef import issue (?), ideep / MKLDNN will appear off, but will still be built statically
+  export BUILD_CAFFE2_OPS=ON    # ON will trigger sleef import issue (?), ideep / MKLDNN will appear off, but will still be built statically
   export BUILD_CAFFE2_MOBILE=OFF
 
   # Tests
-  export ATEN_NO_TEST=ON        # OFF will trigger sleef import issue (?),
-  # export BUILD_TEST=OFF # Undefined symbol _ZN5torch3jit10testFusionEv
+  export ATEN_NO_TEST=OFF       # OFF will trigger sleef import issue (?),
+  # export BUILD_TEST=OFF       # Undefined symbol _ZN5torch3jit10testFusionEv - https://github.com/pytorch/pytorch/issues/26597
 
   # Vendor modules
   export BUILD_CUSTOM_PROTOBUF=OFF
   export USE_OPENCV=ON
   export USE_FFMPEG=ON
   export USE_MKLDNN=ON           # Requires BUILD_CAFFE2_OPS to appear ON in the summary. Still built.
-  export USE_NNPACK=ON # A bit redundant with MKLDNN hopefully PyTorch choose the best depending on op
+  export USE_NNPACK=ON           # A bit redundant with MKLDNN hopefully PyTorch choose the best depending on op
   export USE_NUMPY=ON
   export USE_MAGMA=ON
 
@@ -74,8 +78,8 @@ build() {
   export USE_CUDNN=ON
   export USE_NCCL=ON
   export USE_SYSTEM_NCCL=ON
-  export USE_NATIVE_ARCH=ON
-  export MKLDNN_USE_NATIVE_ARCH=ON
+  export USE_NATIVE_ARCH=OFF        # ON will trigger sleef import issue (?),
+  export MKLDNN_USE_NATIVE_ARCH=OFF # ON will trigger sleef import issue (?),
 
   export MKL_THREADING="OMP"
   export USE_MKLDNN_CBLAS=OFF # Default to MKL if MKL is found, we use systemwide MKLDNN anyway
@@ -101,7 +105,7 @@ build() {
 
   # For system CUB and Pybind11, otherwise PyTorch picks them from thirdparty submodules
   export CUB_INCLUDE_DIRS=/usr/include
-  # export pybind11_INCLUDE_DIR=/usr/include
+  export pybind11_INCLUDE_DIR=/usr/include
 
   # Link to Intel OpenMP like MKL-DNN
   # https://github.com/pytorch/pytorch/issues/12535
@@ -126,6 +130,8 @@ build() {
 
 package() {
   cd "$srcdir/${_pkgname}"
+  # Prevent setup.py from re-running CMake and rebuilding
+  sed -e 's/RUN_BUILD_DEPS = True/RUN_BUILD_DEPS = False/g' -i setup.py
   python setup.py install --root="$pkgdir"/ --optimize=1 --skip-build
   install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.txt"
 
