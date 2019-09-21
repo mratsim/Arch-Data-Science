@@ -5,15 +5,18 @@
 
 pkgname=("python-pytorch-magma-mkldnn-cudnn-git")
 _pkgname="pytorch"
-pkgver=v1.0rc0.r7015.g31139b5f9a
+pkgver=1.0rc0.r7195.gf7ba68e1f7
 pkgrel=1
 pkgdesc="Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 arch=('x86_64')
 url="https://pytorch.org"
 license=('BSD')
 depends=('python' 'python-yaml' 'python-numpy' 'opencv' 'intel-mkl' 'intel-mpi'
-         'cuda' 'cudnn' 'magma' 'nccl' 'cub' 'numactl' 'protobuf' 'mkl-dnn-git')
-makedepends=('python-setuptools' 'cmake' 'git' 'intel-compiler-base')
+         'cuda' 'cudnn' 'magma' 'nccl' 'cub' 'numactl' 'protobuf'
+         'mkl-dnn-git'
+         'pybind11' # system pybind11 is broken - https://github.com/pytorch/pytorch/issues/26555
+         )
+makedepends=('python-setuptools' 'cmake' 'git' 'intel-compiler-base' 'gcc8' 'google-glog' 'gflags')
 provides=('python-pytorch' 'python-pytorch-cuda')
 conflicts=('python-pytorch' 'python-pytorch-cuda')
 source=("git+https://github.com/pytorch/pytorch.git")
@@ -24,22 +27,24 @@ pkgver() {
   # The Arch canonical way is buggy, version is stuck at 1.0 instead at 1.2.0
   # Hopefully nothing enforces pytorch 1.2 until bug is fixed:
   # https://github.com/pytorch/pytorch/issues/26258
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare() {
   cd "${_pkgname}"
-
   git submodule update --init --recursive
 }
 
 build() {
+  export USE_GFLAGS=ON
+  export USE_GLOG=ON
+
   # Caffe2 related
-  export BUILD_CAFFE2_OPS=OFF
+  export BUILD_CAFFE2_OPS=ON     # Needed for MKLDNN support
   export BUILD_CAFFE2_MOBILE=OFF
 
   # Tests
-  export ATEN_NO_TEST=ON
+  # export ATEN_NO_TEST=ON
   # export BUILD_TEST=OFF # Undefined symbol _ZN5torch3jit10testFusionEv
 
   # Vendor modules
@@ -62,14 +67,11 @@ build() {
   export USE_CUDNN=ON
   export USE_NCCL=ON
   export USE_SYSTEM_NCCL=ON
-  export USE_NATIVE_ARCH=ON
+  export USE_NATIVE_ARCH=OFF
   export MKLDNN_USE_NATIVE_ARCH=ON
 
   export MKL_THREADING="OMP"
-  export USE_MKLDNN_CBLAS=ON
-
-  # C++11 ABI - https://github.com/pytorch/pytorch/issues/17492
-  # ??? -D_GLIBCXX_USE_CXX11_ABI=1
+  export USE_MKLDNN_CBLAS=OFF # Default to MKL if MKL is found, we use systemwide MKLDNN anyway
 
   # Compiling and linking
   export CC=gcc-8
@@ -89,7 +91,9 @@ build() {
   export MKLDNN_LIBRARIES=/usr/lib
   export MKLDNN_INCLUDE_DIR=/usr/include
 
-  export CUB_INCLUDE_DIRS=/usr/include # For system CUB, otherwise PyTorch picks it from thirdparty submodules
+  # For system CUB and Pybind11, otherwise PyTorch picks them from thirdparty submodules
+  export CUB_INCLUDE_DIRS=/usr/include
+  export pybind11_INCLUDE_DIR=/usr/include
 
   # Link to Intel OpenMP like MKL-DNN
   # https://github.com/pytorch/pytorch/issues/12535
