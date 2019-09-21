@@ -2,13 +2,13 @@
 
 pkgname=python-pytorch-vision-git
 _pkgname=vision
-pkgver=v0.2.1.r75.g98ca260
+pkgver=0.4.0.r43.g21110d9
 pkgrel=1
 pkgdesc='Datasets, Transforms and Models specific to Computer Vision'
 arch=('any')
 url='https://github.com/pytorch/vision'
 license=('BSD:3-clause')
-makedepends=('git' 'python-setuptools')
+makedepends=('git' 'python-setuptools' 'gcc8' 'cmake')
 depends=('python-numpy' 'python-pytorch' 'python-six' 'python-pillow')
 conflicts=('python-pytorch-vision' 'python-torchvision')
 provides=('python-pytorch-vision' 'python-torchvision')
@@ -18,11 +18,15 @@ md5sums=('SKIP' )
 
 pkgver() {
   cd $_pkgname
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 build() {
   cd "$srcdir/$_pkgname"
+  export CC=gcc-8
+  export CXX=g++-8
+  export CUDAHOSTCXX=g++-8
+  export CUDA_HOME=/opt/cuda
   python setup.py build
 }
 

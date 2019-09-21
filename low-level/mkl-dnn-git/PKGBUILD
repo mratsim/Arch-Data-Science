@@ -4,10 +4,10 @@
 # Updated by Mamy André-Ratsimbazafy <Github mratsim> for Git + OpenMP fixes
 
 _name=mkl-dnn
-_mklmlver=2019.0.20180710 # For the MKL link script for optimized SGEMM
+_mklmlver=2019.0.5.20190502 # For the MKL link script for optimized SGEMM
 _releasever=0.16
 pkgname=mkl-dnn-git
-pkgver=v1.0.rc.r366.g6f54e5b7
+pkgver=1.1.rc.r0.g8d5fc054
 pkgrel=1
 pkgdesc="Intel® Math Kernel Library for Deep Neural Networks - MKL linke"
 arch=(x86_64)
@@ -17,7 +17,7 @@ makedepends=('cmake>=2.8')
 depends=('intel-mkl'            # Provides Optimized SGEMM
          'intel-compiler-base'  # Build Intel OpenMP shared lib
 	 'openmp'
-	 ) 
+	 )
 provides=('mkl-dnn')
 conflicts=('mkl-dnn')
 source=('git+https://github.com/intel/mkl-dnn'
@@ -28,18 +28,18 @@ sha256sums=('SKIP')
 
 pkgver() {
   cd "${_name}"
-  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare() {
-  # Make sure we have iomp5.so in LD_LIBRARY_PATH or MKL-DNN will build its own	
+  # Make sure we have iomp5.so in LD_LIBRARY_PATH or MKL-DNN will build its own
   # if [ -f /usr/lib/libiomp5.so ]; then
   #   if $(pacman -Qs $_name > /dev/null); then # Not very robust but it will catch both release and git version
   #     error "Please uninstall MKL-DNN before recompiling otherwise Intel OpenMP will not be repackaged.";
   #     exit 1
   #   fi
   # fi
-    
+
   cd "$srcdir/$_name"
   mkdir -p build external
 
