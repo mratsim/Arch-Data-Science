@@ -2,7 +2,7 @@
 
 _name=DALI
 pkgname=('dali-git' 'python-dali-git')
-pkgver=0.12.0.dev.r194.ge079bcff
+pkgver=0.13.0
 pkgrel=1
 url='https://github.com/NVIDIA/DALI'
 license=('Apache')
@@ -11,13 +11,16 @@ makedepends=('cmake' 'git' 'python-setuptools')
 arch=('x86_64')
 sha256sums=('SKIP')
 
-pkgver() {
-  cd "${_name}"
-  git describe --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
-}
+## Build bug https://github.com/NVIDIA/DALI/issues/1257 - for now fix the version to 0.13
+# pkgver() {
+#   cd "${_name}"
+#   git describe --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+# }
 
 prepare() {
   cd "${_name}"
+  msg2 "Fixing version to v0.13.0 to workaround https://github.com/NVIDIA/DALI/issues/1257"
+  git checkout v0.13.0
   git submodule update --init --recursive
 }
 
