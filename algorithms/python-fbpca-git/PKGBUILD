@@ -1,0 +1,37 @@
+# Maintainer: Mamy Ratsimbazafy <mamy (dot) ratsimbazafy_pkgbuild [at] gadz (dot) org>
+
+pkgname=python-hdbscan-git
+_pkgname=fbpca
+pkgver=r12.f32210e
+pkgrel=1
+pkgdesc='Functions for principal component analysis (PCA)'
+arch=('any')
+url='https://github.com/facebook/fbpca'
+license=('custom:BSD')
+depends=('python-numpy' 'python-scipy')
+makedepends=('git' 'python-setuptools')
+conflicts=('python-fbpca')
+provides=('python-fbpca')
+source=('git://github.com/facebook/fbpca')
+md5sums=('SKIP' )
+
+pkgver() {
+  cd $_pkgname
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+
+build() {
+  cd $_pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname
+
+  python setup.py install --root=${pkgdir} --optimize=1
+
+  install -D -m644 LICENSE ${pkgdir}/usr/share/licenses/python-fbpca
+  install -D -m644 PATENTS ${pkgdir}/usr/share/licenses/python-fbpca-patents
+}
