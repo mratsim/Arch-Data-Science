@@ -16,18 +16,20 @@
 
 pkgname="opencv-cuda-mkl-ffmpeg-git"
 _name="opencv"
-pkgver=4.1.1.r241.gb4c5b50a3e
+pkgver=4.1.2.r121.g5dd3e6052e
 pkgrel=1
 pkgdesc="Open Source Computer Vision Library compiled CUDA, Intel MKL and ffmpeg"
 url="http://opencv.org/"
 license=('BSD')
 arch=('x86_64')
 depends=(# Always on codecs
-         'zlib' 'libtiff' 'jasper' 'libjpeg' 'libpng' 'openexr' 'libwebp'
-         #  'libdc1394'             # (Firewire) Camera control
+         'zlib' 'libtiff' 'jasper' 'libjpeg' 'libpng' 'libwebp'
+         # 'openexr'             # Support for EXR files
+         #  'libdc1394'          # (Firewire) Camera control
          'python'                # Python "cv2" API
          'cuda' 'cudnn' 'libclc' # CUDA and OpenCL
          'intel-compiler-base'   # Intel MKL variables
+         'intel-mkl'             # Only used for LAPACK, BLAS not used anymore
          'intel-openmp'
          # 'intel-tbb_psxe'      # Intel Threads Building Blocks. Parallel Studio Edition.
          'intel-ipp'             # Intel Integrated Performance Primitives for Computer Vision. Need Intel License (Free for student or Open-Source Contrib)
@@ -104,6 +106,7 @@ build() {
         -D WITH_EIGEN=OFF       # This is just a compat shim
         -D WITH_FFMPEG=ON       # Video input support
         -D WITH_GSTREAMER=OFF   # Also video input
+        -D WITH_OPENEXR=OFF     # ILM and EXR files support - Causes C++11 ABI issues at the moment
         -D WITH_GTK=OFF
         -D WITH_IPP=ON          # Intel Performance Primitives
         -D WITH_HALIDE=OFF      # Halide computational imagery and DNN language. Too early stage https://github.com/opencv/opencv/wiki/DNN-Efficiency
@@ -138,6 +141,7 @@ build() {
         # -D TBBROOT=<>        # Defined in build script by /opt/intel/tbb/bin/tbbvars.sh
 
         # Note: buggy linking: https://github.com/opencv/opencv/issues/12766
+        # Only LAPACK is needed, not BLAS
         -D WITH_MKL=ON
         -D MKL_USE_MULTITHREAD=ON
         -D MKL_WITH_TBB=OFF
