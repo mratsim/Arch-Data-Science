@@ -2,7 +2,7 @@
 
 _name=DALI
 pkgname=('dali-git' 'python-dali-git')
-pkgver=0.13.0
+pkgver=0.15.0.dev.r128.g4d31efd6
 pkgrel=1
 url='https://github.com/NVIDIA/DALI'
 license=('Apache')
@@ -11,16 +11,13 @@ makedepends=('cmake' 'git' 'python-setuptools')
 arch=('x86_64')
 sha256sums=('SKIP')
 
-## Build bug https://github.com/NVIDIA/DALI/issues/1257 - for now fix the version to 0.13
-# pkgver() {
-#   cd "${_name}"
-#   git describe --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
-# }
+pkgver() {
+  cd "${_name}"
+  git describe --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
 
 prepare() {
   cd "${_name}"
-  msg2 "Fixing version to v0.13.0 to workaround https://github.com/NVIDIA/DALI/issues/1257"
-  git checkout v0.13.0
   git submodule update --init --recursive
 }
 
@@ -31,7 +28,7 @@ build(){
   mkdir -p "${_name}"/build
   cd "${_name}"/build
   cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}"/usr -DPROTOBUF_LIBRARY=/usr/lib/libprotobuf.so
-  make
+  make -j$(nproc)
 }
 
 # Buggy at the moment, the DALI pkg is empty
